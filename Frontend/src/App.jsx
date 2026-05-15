@@ -7,7 +7,7 @@ import ServiewPages from './pages/services/ServicePages.jsx';
 
 export function App() {
   return (
-    <div className="scroll-smooth font-Inter">
+    <div className="scroll-smooth font-Inter bg-app">
       <Header />
       <Homepage />
       <ProductPages />
