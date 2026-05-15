@@ -2,9 +2,12 @@ function HomePages() {
   return (
     <section
       id="home"
-      className="h-screen flex items-center justify-center bg-red-200 text-4xl"
+      className="h-screen flex items-center justify-center bg-red-200 text-4xl ps-8"
     >
-      Home Section
+      <div className="">
+        Home Section
+        <img src="images/logo.png" alt="" />
+      </div>
     </section>
   )
 }
