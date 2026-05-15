@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+
+}
+
+:root {
+  --color-primary: #6B4F3A;
+  --color-primary-hover: #5A4030;
+  --color-secondary: #C8A27C;
+
+  --color-bg-app: #F7F5F2;
+  --color-border-line: #E5E7EB;
+}
+
+@theme {
+  --font-Inter: "Inter", sans-serif;
+}
+
+/* Backgrounds */
+.bg-app {
+  background-color: var(--color-bg-app);
+}
+
+.bg-primary{
+  background-color: var(--color-primary);
+}
+
+.bg-secondary{
+  background-color: var(--color-secondary);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.border-line {
+  /* border-color: var(--color-border-line); */
+}
+
+.border-primary {
+  border-color: var(--color-primary);
+}
