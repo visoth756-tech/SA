@@ -42,3 +42,7 @@ html {
 .border-primary {
   border-color: var(--color-primary);
 }
+
+.body-px{
+  @apply px-16;
+}

@@ -1,0 +1,26 @@
+dashboard
+Total Revenue (Month, price)
+Total Orders (Month, number)
+New Customers (month, number)
+Total Menu Items (month, number) 
+
+Menu
+Total Items (num)
+Categories (Static, num)
+Available Items (Current, num)
+Best Seller (Month, num) 		top 1
+
+-- create top 5 sell
+
+Order
+Monthly Order (month, num)
+Daily Orders (daily, number)
+Daily Revenue (daily, price)
+Average Order (month, price)
+
+Customer
+Total Cus.. (month, number)
+New Cus.. (this month signup, number)	
+Active Cus.. (month, number) 		buy a item in a month
+Frequent Customers (month, number)	monthly order per a person
+

@@ -3,8 +3,16 @@ import "./Sidebar.css";
 import { useState } from "react";
 
 export function Sidebar() {
-  const icon = (name, isActive) =>
+  const navItems = [
+    { to: "/", icon: "dashboard", label: "Dashboard" },
+    { to: "/menu", icon: "menu", label: "Menu" },
+    { to: "/order", icon: "order", label: "Order" },
+    { to: "/customer", icon: "customer", label: "Customer" },
+  ];
+
+  const iconType = (name, isActive) =>
     `images/${name}_${isActive ? "fill" : "outline"}.png`;
+  const iconSize = "w-5 lg:w-6";
 
   const [active, setActive] = useState("light");
 
@@ -25,10 +33,8 @@ export function Sidebar() {
   return (
     <div
       className="
-        sticky top-0
-        h-screen
-        shrink-0
-        w-20 lg:w-64
+        sticky top-0 h-screen shrink-0
+        w-18 md:w-20 lg:w-auto
         flex flex-col justify-between
         transition-all duration-300
       "
@@ -38,7 +44,7 @@ export function Sidebar() {
         <div className="flex flex-col gap-4 lg:gap-6">
           <img
             src="images/logo.png"
-            className="w-14 lg:w-52 xl:w-60"
+            className="w-14 lg:w-46"
           />
 
           <div className="hidden lg:block text-sm text-gray-500">
@@ -47,106 +53,22 @@ export function Sidebar() {
         </div>
 
         <div className="nav pt-2 lg:pt-3">
-          <NavLink to="/">
-            {({ isActive }) => (
-              <div
-                className={
-                  isActive ? "nav-items nav-border" : "nav-items"
-                }
-              >
-                <img
-                  src={icon("dashboard", isActive)}
-                  className="w-5 lg:w-6"
-                />
+          {navItems.map((item) => (
+            <NavLink key={item.to} to={item.to}>
+              {({ isActive }) => (
+                <div className={`nav-items ${isActive ? "nav-border" : ""}`}>
+                  <img
+                    src={iconType(item.icon, isActive)}
+                    className={iconSize}
+                  />
 
-                <div className="hidden lg:block">
-                  Dashboard
+                  <div className="hidden lg:block">
+                    {item.label}
+                  </div>
                 </div>
-              </div>
-            )}
-          </NavLink>
-
-          <NavLink to="/menu">
-            {({ isActive }) => (
-              <div
-                className={
-                  isActive ? "nav-items nav-border" : "nav-items"
-                }
-              >
-                <img
-                  src={icon("menu", isActive)}
-                  className="w-5 lg:w-6"
-                />
-
-                <div className="hidden lg:block">
-                  Menu
-                </div>
-              </div>
-            )}
-          </NavLink>
-
-          <NavLink to="/order">
-            {({ isActive }) => (
-              <div
-                className={
-                  isActive ? "nav-items nav-border" : "nav-items"
-                }
-              >
-                <img
-                  src={icon("order", isActive)}
-                  className="w-5 lg:w-6"
-                />
-
-                <div className="hidden lg:block">
-                  Order
-                </div>
-              </div>
-            )}
-          </NavLink>
-
-          <NavLink to="/customer">
-            {({ isActive }) => (
-              <div
-                className={
-                  isActive ? "nav-items nav-border" : "nav-items"
-                }
-              >
-                <img
-                  src={icon("customer", isActive)}
-                  className="w-5 lg:w-6"
-                />
-
-                <div className="hidden lg:block">
-                  Customer
-                </div>
-              </div>
-            )}
-          </NavLink>
-
-          <div className="my-4 lg:my-5 border border-gray-300"></div>
-
-          <div className="hidden lg:block text-sm text-gray-500">
-            Others
-          </div>
-
-          <NavLink to="/idk">
-            {({ isActive }) => (
-              <div
-                className={
-                  isActive ? "nav-items nav-border" : "nav-items"
-                }
-              >
-                <img
-                  src={icon("setting", isActive)}
-                  className="w-5 lg:w-6"
-                />
-
-                <div className="hidden lg:block">
-                  Advance Settings
-                </div>
-              </div>
-            )}
-          </NavLink>
+              )}
+            </NavLink>
+          ))}
         </div>
       </div>
 
@@ -160,8 +82,8 @@ export function Sidebar() {
               }
             >
               <img
-                src={icon("help", isActive)}
-                className="w-5 lg:w-6"
+                src={iconType("help", isActive)}
+                className={iconSize}
               />
 
               <div className="hidden lg:block">
@@ -179,8 +101,8 @@ export function Sidebar() {
               }
             >
               <img
-                src={icon("contact", isActive)}
-                className="w-5 lg:w-6"
+                src={iconType("contact", isActive)}
+                className={iconSize}
               />
 
               <div className="hidden lg:block">
@@ -205,8 +127,8 @@ export function Sidebar() {
             className={btnClass("light")}
           >
             <img
-              src={icon("sun", active === "light")}
-              className="w-5 lg:w-6"
+              src={iconType("sun", active === "light")}
+              className={iconSize}
             />
 
             <span className="hidden lg:block">
@@ -219,8 +141,8 @@ export function Sidebar() {
             className={btnClass("dark")}
           >
             <img
-              src={icon("moon", active === "dark")}
-              className="w-5 lg:w-6"
+              src={iconType("moon", active === "dark")}
+              className={iconSize}
             />
 
             <span className="hidden lg:block text-gray-500">

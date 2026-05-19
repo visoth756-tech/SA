@@ -3,7 +3,7 @@ import './Header.css';
 function Header() {
   return (
     <header className="fixed top-0 left-0 w-full shadow-md z-50 bg-transparent backdrop-blur-sm">
-      <nav className="flex justify-between items-center gap-4 p-4">
+      <nav className="flex justify-between items-center gap-4 body-px">
         <div>
           <a href="#">
             <img src="images/logo.png" alt="" className="w-35" />
@@ -11,25 +11,25 @@ function Header() {
         </div>
         <div
           className="
-            grid grid-cols-2 md:grid-cols-4
+            grid grid-cols-4
             justify-center items-center
             gap-2 md:gap-4 lg:gap-8
             border-b-2 border-primary pb-1
           "
         >
-          <a href="#home" className="text-primary lg:text-base sm:text-sm hover:underline whitespace-nowrap">
+          <a href="#home" className="text-primary hover:underline whitespace-nowrap">
             Home
           </a>
 
-          <a href="#product" className="text-primary lg:text-base sm:text-sm hover:underline whitespace-nowrap">
+          <a href="#product" className="text-primary hover:underline whitespace-nowrap">
             Product
           </a>
 
-          <a href="#review" className="text-primary lg:text-base sm:text-sm hover:underline whitespace-nowrap">
+          <a href="#review" className="text-primary hover:underline whitespace-nowrap">
             Review
           </a>
 
-          <a href="#service" className="text-primary lg:text-base sm:text-sm hover:underline whitespace-nowrap">
+          <a href="#service" className="text-primary hover:underline whitespace-nowrap">
             Service
           </a>
         </div>

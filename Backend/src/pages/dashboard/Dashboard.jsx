@@ -6,6 +6,7 @@ import { formatPercentage } from "../../utils/formating";
 import TableData from "../../components/TableData";
 import { tableCards } from "../../utils/fakeData";
 import TotalValue from "../../components/TotalValue";
+import fakeTotalValue from "../../utils/fakeTotalValue";
 
 export function Dashboard() {
   const tableHeader = ['Product Name', 'Order Id', 'Customer', 'Price'];
@@ -15,40 +16,6 @@ export function Dashboard() {
     { name: "Cookie", qty: 100, percent: "2000" },
     { name: "Croissant", qty: 69, percent: "1590" },
   ];
-  const totalValue = [
-    {
-      id: "total_orders",
-      title: "Total Income",
-      value: 128000,
-      type: "money",
-      per: 2000,
-      date: "This Month"
-    },
-    {
-      id: "revenue",
-      title: "Total Revenue",
-      value: 345075,
-      type: "money",
-      per: 5000,
-      date: "This Month"
-    },
-    {
-      id: "avg_order_value",
-      title: "Total Order",
-      value: 129500,
-      type: "money",
-      per: 10000,
-      date: "This Month"
-    },
-    {
-      id: "today_orders",
-      title: "Total Customer",
-      value: 42000,
-      type: "money",
-      per: 6800,
-      date: "This Month"
-    }
-  ]
 
   return (
     <>
@@ -125,7 +92,7 @@ export function Dashboard() {
                       gap-2
                     "
                   >
-                    ☕ Coffeep
+                    Coffeep
                     <span>↗</span>
                   </div>
 
@@ -134,7 +101,9 @@ export function Dashboard() {
               </div>
 
               {/* TOTAL VALUE */}
-              <TotalValue totalValue={totalValue} />
+              <TotalValue 
+                totalValue={fakeTotalValue.dashboard} 
+              />
 
               {/* REVENUE */}
               <div

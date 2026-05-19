@@ -1,16 +1,19 @@
 export function formatNumber(value) {
-  return value.toLocaleString('en-US');
+  return Math.round(value).toLocaleString('en-US');
 }
 
 export function formatMoney(value) {
-  return (value / 100).toLocaleString("en-US", {
+  const dollars = value / 100;
+  const fixed2 = parseFloat(dollars.toFixed(2));
+  return fixed2.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
-    minimumFractionDigits: 2,
+    minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   });
 }
 
 export function formatPercentage(per) {
-  return `${(per / 100).toFixed(2)}%`;
+  const fixed2 = parseFloat((per / 100).toFixed(2));
+  return `${fixed2}%`;
 }

@@ -6,41 +6,11 @@ import NewValue from "../../components/NewValue";
 import { formatMoney } from "../../utils/formating";
 import TotalValue from '../../components/TotalValue';
 import AddNewValue from '../../components/AddNewValue';
+import fakeTotalValue from '../../utils/fakeTotalValue';
+import SearchInfo from '../../components/SearchInfo';
 
 export function Menu() {
-  const totalValue = [
-    {
-      id: "total_customers",
-      title: "Total Menu",
-      value: 56,
-      type: "number",
-      date: "This Month"
-    },
-    {
-      id: "new_customer",
-      title: "Item Sales",
-      value: 965,
-      type: "number",
-      per: 2000,
-      date: "This Month"
-    },
-    {
-      id: "avg_customer_value",
-      title: "Stock Items",
-      value: 1295,
-      type: "number",
-      per: 2590,
-      date: "This Month"
-    },
-    {
-      id: "today_customers",
-      title: "Out of Stock",
-      value: 17,
-      type: "number",
-      per: 560,
-      date: "This Month"
-    }
-  ];
+  const titleBoard = "Menu";
   const img = "images/product-coffee.jpg";
   const products = [
     {
@@ -76,6 +46,7 @@ export function Menu() {
       image: img
     }
   ];
+
   return (
     <>
       <title>Menu</title>
@@ -83,11 +54,14 @@ export function Menu() {
       <div className="flex h-screen overflow-hidden bg-body font-Inter">
         <Sidebar />
         <div className="flex-1 flex flex-col gap-4 p-4 overflow-y-auto bg-white border border-line rounded-2xl">
-          <Header header={"Menu"} />
-          <div className="flex xl:flex-row gap-4">
-            <TotalValue totalValue={totalValue} />
-            <AddNewValue title={"Menu"} />
+          <Header header={titleBoard} />
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
+            <TotalValue
+              totalValue={fakeTotalValue.menu}
+            />
+            <AddNewValue title={titleBoard} />
           </div>
+          <SearchInfo />
 
           {/* Table */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
