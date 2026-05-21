@@ -15,7 +15,7 @@ function PasswordInput({ label, name, placeholder, className, show, onToggle, va
           onChange={onChange}
         />
         <img
-          src={`/images/${show ? "hide" : "unhide"}.png`}
+          src={`/images//${show ? "hide" : "unhide"}.png`}
           alt="Show/Hide"
           onClick={onToggle}
           className="h-4 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"

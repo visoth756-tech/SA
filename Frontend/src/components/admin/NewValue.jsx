@@ -7,7 +7,7 @@ function NewValue({ newValue }) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 lg:p-5 bg-white border border-line rounded-2xl shadow-sm">
         <div className="flex items-center gap-3 min-w-0">
           <img
-            src="images/add_coffee_outline.png"
+            src="/images/add_coffee_outline.png"
             className="w-9 h-9 lg:w-10 lg:h-10 bg-[#F0EDEB] rounded-lg p-2 shrink-0"
           />
 
@@ -31,7 +31,7 @@ function NewValue({ newValue }) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 lg:p-5 bg-white border border-line rounded-2xl shadow-sm">
         <div className="flex items-center gap-3 min-w-0">
           <img
-            src="images/action.png"
+            src="/images/action.png"
             className="w-9 h-9 lg:w-10 lg:h-10 bg-[#F0EDEB] rounded-lg p-2 shrink-0"
           />
 

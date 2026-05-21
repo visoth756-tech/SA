@@ -106,7 +106,7 @@ export default function DashboardTotalValue() {
                   "
                 >
                   <img
-                    src={`images/stock_${diff > 0 ? "up" : "down"}.png`}
+                    src={`/images/stock_${diff > 0 ? "up" : "down"}.png`}
                     className="w-5 lg:w-6"
                   />
 

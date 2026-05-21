@@ -1,6 +1,6 @@
 import React from 'react'
 
-function AddNewValue({ title }) {
+function AddNewValue({ title, setOpen }) {
   return (
     <div className="flex flex-col justify-between gap-4 bg-white p-4 lg:p-5 rounded-2xl border border-line shadow-sm">
       <div className="flex items-center gap-3 min-w-0">
@@ -20,8 +20,11 @@ function AddNewValue({ title }) {
         </div>
       </div>
 
-      <button className="bg-primary hover:opacity-90 text-white text-sm lg:text-base py-2.5 rounded-2xl transition-all duration-200">
-        Add +
+      <button
+        onClick={() => setOpen(true)}
+        className="bg-primary hover:opacity-90 text-white text-sm lg:text-base py-2.5 rounded-2xl transition-all duration-200"
+      >
+        Add {title}
       </button>
     </div>
   )

@@ -18,7 +18,7 @@ function HomePages() {
           <div className="font-serif">Order premium coffee online and enjoy fast, reliable delivery.</div>
         </div>
         <div className="slide-in border">
-          <img src="images/Homepage_Coffee_Cup.png" alt="" className="w-150" />
+          <img src="/images/Homepage_Coffee_Cup.png" alt="" className="w-150" />
         </div>
       </div>
     </section>

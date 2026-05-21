@@ -7,7 +7,7 @@ function Header() {
       <nav className="flex justify-between items-center gap-4 body-px">
         <div>
           <a href="#">
-            <img src="images/logo.png" alt="" className="w-35" />
+            <img src="/images/logo.png" alt="" className="w-35" />
           </a>
         </div>
         <div
@@ -36,13 +36,13 @@ function Header() {
         </div>
         <div className="flex">
           <a href="#">
-            <img src="images/search.png" alt="" className="w-10" />
+            <img src="/images/search.png" alt="" className="w-10" />
           </a>
           <a href="#">
-            <img src="images/shop.png" alt="" className="w-10" />
+            <img src="/images/shop.png" alt="" className="w-10" />
           </a>
           <Link to="/auth/login">
-            <img src="images/person.png" alt="" className="w-10" />
+            <img src="/images/person.png" alt="" className="w-10" />
           </Link>
         </div>
       </nav>
