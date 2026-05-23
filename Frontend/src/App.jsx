@@ -14,13 +14,20 @@ import NotFound from './components/common/NotFound';
 
 export function App() {
   const [list, setList] = useState([]);
+  const loadCategory = async () => {
+    try {
+      const response = await axios.get('/api/categories');
+      setList(response.data.list);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
-    const fetchAppData = async () => {
-      const response = await axios.get('/api/categories');
-      setList(response.data.list)
-    }
-    fetchAppData();
+    const fetchOnMount = async () => {
+      await loadCategory();
+    };
+    fetchOnMount();
   }, []);
 
   return (
@@ -32,7 +39,7 @@ export function App() {
         <Route path="/auth/createAcc" element={<CreateAccount />} />
 
         <Route path="/admin" element={<Dashboard />} />
-        <Route path="/admin/category" element={<Category list={list} />} />
+        <Route path="/admin/category" element={<Category list={list} loadCategory={loadCategory} />} />
         <Route path="/admin/menu" element={<Menu />} />
         <Route path="/admin/order" element={<Order />} />
         <Route path="/admin/customer" element={<Customer />} />

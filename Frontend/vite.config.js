@@ -10,10 +10,11 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
-    proxy:{
-      '/api' : {
-        target: 'http://localhost:3100'
-      },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3100',
+        changeOrigin: true,
+      }
       // '/images' : {
       //   target: 'http://localhost:3100'
       // }

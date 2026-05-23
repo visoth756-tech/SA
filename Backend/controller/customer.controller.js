@@ -32,7 +32,7 @@ exports.getCustomerById = async (req, res) =>{
 
 exports.createCustomer = async (req, res) => {
     try {
-        const {first_name, last_name, email,password, phone, royalty_points} = req.body;
+        const {first_name, last_name, email,password, phone, loyalty_points} = req.body;
         
         if(!first_name || !last_name || !email || !password){
             return res.status(400).json({
@@ -46,7 +46,7 @@ exports.createCustomer = async (req, res) => {
             email,
             password,
             phone,
-            royalty_points
+            loyalty_points
         })
 
         res.status(201).json({
