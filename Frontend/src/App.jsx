@@ -13,16 +13,16 @@ import Category from './pages/admin/category/category';
 import NotFound from './components/common/NotFound';
 
 export function App() {
-  const [list, setList] = useState([]);
+  const [category, setCategory] = useState([]);
   const loadCategory = async () => {
     try {
       const response = await axios.get('/api/categories');
-      setList(response.data.list);
+      setCategory(response.data);
     } catch (err) {
       console.log(err);
     }
   };
-
+  
   useEffect(() => {
     const fetchOnMount = async () => {
       await loadCategory();
@@ -39,7 +39,7 @@ export function App() {
         <Route path="/auth/createAcc" element={<CreateAccount />} />
 
         <Route path="/admin" element={<Dashboard />} />
-        <Route path="/admin/category" element={<Category list={list} loadCategory={loadCategory} />} />
+        <Route path="/admin/category" element={<Category category={category} loadCategory={loadCategory} />} />
         <Route path="/admin/menu" element={<Menu />} />
         <Route path="/admin/order" element={<Order />} />
         <Route path="/admin/customer" element={<Customer />} />

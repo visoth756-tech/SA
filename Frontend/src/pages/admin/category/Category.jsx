@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
 import Sidebar from '../../../components/admin/Sidebar';
 import { Header } from '../../../components/admin/Header';
-// import TotalValue from '../../../components/admin/TotalValue';
+import TotalValue from '../../../components/admin/TotalValue';
 import AddNewValue from '../../../components/admin/AddNewValue';
 import SearchInfo from '../../../components/admin/SearchInfo';
 import TableData from '../../../components/admin/TableData';
-import AddNewCategory from './addNewCategory';
 import axios from 'axios';
 import ConfirmPopup from '../../../components/common/ConfirmPopup';
 import CategoryPopup from './CategoryPopup';
 
-function Category({ list, loadCategory }) {
+function Category({ category, loadCategory }) {
   const title = "Category";
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("add");
@@ -19,6 +18,17 @@ function Category({ list, loadCategory }) {
   const [desc, setDesc] = useState("");
   const [deleteId, setDeleteId] = useState(null);
   const [openDelete, setOpenDelete] = useState(false);  // separate open state
+
+  const totalCard = {
+    total_categories: {
+      id: "total_category",
+      name: "Total Categories",
+      type: "static",
+      value: category.total_categories,
+    }
+  }
+
+  const categoryList = category.list || [];
 
   const handleOpenDelete = (id) => {
     setDeleteId(id);
@@ -75,6 +85,7 @@ function Category({ list, loadCategory }) {
       console.log(err);
     }
   };
+
   return (
     <>
       <title>{title}</title>
@@ -84,8 +95,9 @@ function Category({ list, loadCategory }) {
         <div className="flex-1 flex flex-col gap-4 p-4 overflow-y-auto bg-white border border-line rounded-2xl">
           <Header header={title} />
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
-            {/* <TotalValue
-            /> */}
+            <TotalValue
+              totalValue={totalCard}
+            />
             {/* Card */}
             <div className="flex flex-col justify-between gap-4 bg-white p-4 lg:p-5 rounded-2xl border border-line shadow-sm">
               <div className="flex items-center gap-3 min-w-0">
@@ -126,7 +138,7 @@ function Category({ list, loadCategory }) {
               </div>
 
               {/* TABLE ROWS (dynamic) */}
-              {list.map((category) => (
+              {categoryList.map((category) => (
                 <div
                   key={category.category_id}
                   className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr] text-sm px-4 py-3 border-b border-gray-100 hover:bg-gray-50"
@@ -141,13 +153,13 @@ function Category({ list, loadCategory }) {
                   <div className="flex justify-center gap-3">
                     <button
                       onClick={() => handleOpenEdit(category)}
-                      className="text-indigo-600 hover:text-indigo-900"
+                      className="border py-1 px-2 rounded-md text-indigo-600 hover:text-indigo-900"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => { handleOpenDelete(category.category_id) }}
-                      className="text-red-600 hover:text-red-900"
+                      className="border py-1 px-2 rounded-md text-red-600 hover:text-red-900"
                     >
                       Delete
                     </button>
@@ -156,7 +168,7 @@ function Category({ list, loadCategory }) {
               ))}
 
               {/* Optional: empty state */}
-              {list.length === 0 && (
+              {category.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
                   No categories found.
                 </div>

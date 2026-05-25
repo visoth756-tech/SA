@@ -17,3 +17,7 @@ export function formatPercentage(per) {
   const fixed2 = parseFloat((per / 100).toFixed(2));
   return `${fixed2}%`;
 }
+
+export function formatFullname(first = "", last = "") {
+  return `${first} ${last}`.trim();
+}

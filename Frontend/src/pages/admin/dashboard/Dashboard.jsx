@@ -1,10 +1,9 @@
 import React from 'react'
 import "./Dashboard.css";
-import { formatPercentage } from "../../../utils/admin/formating";
+import { formatPercentage } from "../../../utils/formating";
 import TableData from "../../../components/admin/TableData";
 import { tableCards } from "../../../utils/admin/fakeData";
 import TotalValue from "../../../components/admin/TotalValue";
-import fakeTotalValue from "../../../utils/admin/fakeTotalValue";
 import Sidebar from '../../../components/admin/Sidebar';
 import { Header } from '../../../components/admin/Header';
 
@@ -101,9 +100,9 @@ function Dashboard() {
               </div> */}
 
               {/* TOTAL VALUE */}
-              <TotalValue
+              {/* <TotalValue
                 totalValue={fakeTotalValue.dashboard}
-              />
+              /> */}
 
               {/* REVENUE */}
               <div

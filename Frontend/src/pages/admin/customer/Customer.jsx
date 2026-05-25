@@ -1,5 +1,5 @@
 import './Customer.css';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Header } from "../../../components/admin/Header";
 import NewValue from "../../../components/admin/NewValue";
@@ -8,12 +8,42 @@ import TableData from '../../../components/admin/TableData';
 import TotalValue from '../../../components/admin/TotalValue';
 import AddNewValue from '../../../components/admin/AddNewValue';
 import SearchInfo from '../../../components/admin/SearchInfo';
-import fakeTotalValue from '../../../utils/admin/fakeTotalValue';
-import { tableCards } from '../../../utils/admin/fakeData';
+import TableCustomer from './TableCustomer';
+import axios from 'axios';
 
 export function Customer() {
-  const titleBoard = "Customer";
-  const tableHeader = ['Name', 'Cusotmer ID', 'Email', 'Phone'];
+  const title = "Customer";
+  const [user, setUser] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState("add"); // add or edit
+
+  const loadUser = async () => {
+    try {
+      const res = await axios.get("/api/customers");
+      setUser(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    const fetchOnMount = async () => {
+      await loadUser();
+    };
+    fetchOnMount();
+  }, []);
+
+  const customerList = user.list || [];
+
+  const totalCard = {
+    total_customer: {
+      id: "total_customer",
+      name: "Total Customer",
+      type: "monthly",
+      value: Object.keys(customerList).length,
+      per: -100
+    }
+  }
 
   return (
     <>
@@ -22,17 +52,114 @@ export function Customer() {
       <div className="flex h-screen overflow-hidden bg-body font-Inter">
         <Sidebar />
         <div className="flex-1 flex flex-col gap-4 p-4 overflow-y-auto bg-white border border-line rounded-2xl">
-          <Header header={titleBoard} />
+          <Header header={title} />
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
             <TotalValue
-              totalValue={fakeTotalValue.orders}
+              totalValue={totalCard}
             />
-            <AddNewValue title={titleBoard} />
+            <AddNewValue
+              title={title}
+              onClick={() => {
+                setMode("add");
+                setOpen(true);
+              }}
+            />
           </div>
           <SearchInfo />
-          <TableData tableHeader={tableHeader} tableCards={tableCards} />
+          <TableCustomer
+            customerList={customerList}
+            loadUser={loadUser}
+          />
         </div>
       </div>
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-xl font-semibold">
+                {mode === "edit" ? `Edit ${title}` : `Add New ${title}`}
+              </h2>
+
+              <button
+                onClick={() => setOpen(false)}
+                className="text-gray-500 hover:text-black text-xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Form */}
+            <form className="space-y-4"
+            // onSubmit={handleSubmit}
+            >
+              {/* First Name */}
+              <input
+                type="text"
+                // value={firstName}
+                // onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First Name"
+                className="w-full border rounded-xl px-4 py-2"
+                required
+              />
+
+              {/* Last Name */}
+              <input
+                type="text"
+                // value={lastName}
+                // onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last Name"
+                className="w-full border rounded-xl px-4 py-2"
+                required
+              />
+
+              {/* Email */}
+              <input
+                type="email"
+                // value={email}
+                // onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className="w-full border rounded-xl px-4 py-2"
+                required
+              />
+
+              {/* Phone */}
+              <input
+                type="text"
+                // value={phone}
+                // onChange={(e) => setPhone(e.target.value)}
+                placeholder="Phone"
+                className="w-full border rounded-xl px-4 py-2"
+              />
+
+              {/* Buttons */}
+              <div className="flex justify-end gap-3 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="px-4 py-2 rounded-xl border hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-black text-white hover:bg-gray-800"
+                >
+                  {mode === "edit" ? "Update Customer" : "Save Customer"}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

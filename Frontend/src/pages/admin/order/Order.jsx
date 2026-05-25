@@ -6,7 +6,7 @@ import TotalValue from '../../../components/admin/TotalValue';
 import AddNewValue from '../../../components/admin/AddNewValue';
 import SearchInfo from '../../../components/admin/SearchInfo';
 import TableData from '../../../components/admin/TableData';
-import fakeTotalValue from '../../../utils/admin/fakeTotalValue';
+// import fakeTotalValue from '../../../utils/admin/fakeTotalValue';
 
 
 export function Order() {
@@ -62,9 +62,9 @@ export function Order() {
           <Header header={titleBoard} />
           
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
-            <TotalValue
+            {/* <TotalValue
               totalValue={fakeTotalValue.orders}
-            />
+            /> */}
             <AddNewValue title={titleBoard} />
           </div>
           <SearchInfo />

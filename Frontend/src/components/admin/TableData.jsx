@@ -1,5 +1,5 @@
 import React from 'react'
-import { formatMoney } from '../../utils/admin/formating';
+import { formatMoney } from '../../utils/formating';
 
 function TableData({ tableHeader, tableCards }) {
   const normalizedData = tableCards.map((item) => ({
@@ -22,7 +22,7 @@ function TableData({ tableHeader, tableCards }) {
           <div>{tableHeader[1]}</div>
           <div>{tableHeader[2]}</div>
           <div>{tableHeader[3]}</div>
-          <div>Status</div>
+          <div className="flex justify-center">Status</div>
           <div className="flex justify-center">Action</div>
         </div>
 
@@ -57,7 +57,7 @@ function TableData({ tableHeader, tableCards }) {
               <div className="text-gray-400 text-xs">{data.subThird}</div>
             </div>
 
-            <div className="col-span-1 text-yellow-500 font-medium">
+            <div className="flex justify-center col-span-1 text-yellow-500 font-medium">
               {data.status}
             </div>
 
