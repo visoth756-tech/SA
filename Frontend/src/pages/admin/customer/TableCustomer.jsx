@@ -41,7 +41,7 @@ function TableCustomer({ customerList }) {
           >
             <div className="flex items-center gap-3 font-semibold">{c.customer_id}</div>
             <div className="font-medium truncate">{formatFullname(c.first_name, c.last_name)}</div>
-            <div className="font-medium truncate">{c?.email}</div>
+            <div className="font-medium truncate">{c.email}</div>
             <div className="font-medium truncate">{c.phone}</div>
             <div className="flex justify-center">{c.loyalty_points}</div>
             <div className="flex justify-center">
@@ -63,17 +63,17 @@ function TableCustomer({ customerList }) {
               </select>
             </div>
             <div className="flex justify-center gap-2">
-              <div ref={ref} className="relative inline-block text-right">
+              <div ref={ref} className="inline-block text-right">
 
                 {/* Button */}
                 <button
+                  key={c.customer_id}
                   onClick={() => setOpenView(true)}
                   className="flex gap-1 border py-1 px-2 rounded-md text-gray-500 hover:text-black items-center"
                 >
                   <div>View</div>
                   <HiChevronDown size={18} />
                 </button>
-
               </div>
             </div>
           </div>
@@ -81,7 +81,8 @@ function TableCustomer({ customerList }) {
         {/* Dropdown */}
         {openView && (
           <div
-            className="fixed right-0 w-40 bg-white border rounded-md shadow-md z-50"
+            key={customerList.customer_id}
+            className="absolute top-0 w-40 bg-white border rounded-md shadow-md z-50"
           >
             <button
               onClick={() => setOpenView(false)}

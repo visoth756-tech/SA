@@ -21,7 +21,7 @@ function AddNewValue({ title, onClick }) {
       </div>
 
       <button
-      onClick={onClick}
+        onClick={onClick}
         className="bg-primary hover:opacity-90 text-white text-sm lg:text-base py-2.5 rounded-2xl transition-all duration-200"
       >
         Add {title}

@@ -1,5 +1,5 @@
 import './Customer.css';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Header } from "../../../components/admin/Header";
 import NewValue from "../../../components/admin/NewValue";
@@ -9,31 +9,12 @@ import TotalValue from '../../../components/admin/TotalValue';
 import AddNewValue from '../../../components/admin/AddNewValue';
 import SearchInfo from '../../../components/admin/SearchInfo';
 import TableCustomer from './TableCustomer';
-import axios from 'axios';
 
-export function Customer() {
+export function Customer({ customerList, loadUser }) {
   const title = "Customer";
-  const [user, setUser] = useState([]);
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("add"); // add or edit
 
-  const loadUser = async () => {
-    try {
-      const res = await axios.get("/api/customers");
-      setUser(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    const fetchOnMount = async () => {
-      await loadUser();
-    };
-    fetchOnMount();
-  }, []);
-
-  const customerList = user.list || [];
 
   const totalCard = {
     total_customer: {
@@ -44,6 +25,7 @@ export function Customer() {
       per: -100
     }
   }
+
 
   return (
     <>

@@ -6,6 +6,7 @@ import InputField from '../../components/auth/InputField';
 import { validateRegister } from '../../utils/auth/validateRegister';
 import { useForm } from '../../utils/auth/useForm';
 import { Link } from 'react-router';
+import { HiChevronDown } from "react-icons/hi";
 
 function CreateAccount() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -91,12 +92,10 @@ function CreateAccount() {
                   <option value="no selecting">Prefer not to say</option>
                 </select>
 
-                <svg
+                <HiChevronDown
+                  size={25}
                   className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-coffee-400"
-                  width="16" height="16" viewBox="0 0 16 16" fill="none"
-                >
-                  <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                />
               </div>
               <p className="error-text">{errors.gender}</p>
             </div>

@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { validateLogin } from "../../utils/auth/validateLogin";
 import InputField from '../../components/auth/InputField';
 import { useForm } from "../../utils/auth/useForm";
+import HideIcon from "../../components/common/HideIcon";
 
-function LoginAccount() {
+function LoginAccount({ customerList }) {
   const { form, errors, setErrors, showPassword, setShowPassword, handleChange, resetForm } = useForm({
     email: "",
     password: "",
@@ -11,10 +12,10 @@ function LoginAccount() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validateLogin(form, setErrors)) return;
+    if (!validateLogin(form, setErrors, customerList)) return;
 
     console.log(form);
-    
+
     resetForm();
   };
 
@@ -74,7 +75,6 @@ function LoginAccount() {
             </div>
 
             <div className="relative mt-2">
-
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
@@ -84,12 +84,11 @@ function LoginAccount() {
                 value={form.password}
                 onChange={handleChange}
               />
-
-              <img
-                src={`/images/${showPassword ? "hide" : "unhide"}.png`}
-                alt="Show Password"
+              <HideIcon
+                size={20}
+                show={!showPassword}
                 onClick={() => setShowPassword(!showPassword)}
-                className="h-4 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                className="text-coffee-500 h-4 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
               />
 
             </div>
@@ -97,7 +96,6 @@ function LoginAccount() {
             <p className="error-text">
               {errors.password}
             </p>
-
           </div>
 
           {/* Login Button */}
@@ -109,7 +107,6 @@ function LoginAccount() {
             >
               Login
             </button>
-
           </div>
 
           {/* Create Account */}

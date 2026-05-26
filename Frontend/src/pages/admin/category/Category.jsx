@@ -9,7 +9,7 @@ import axios from 'axios';
 import ConfirmPopup from '../../../components/common/ConfirmPopup';
 import CategoryPopup from './CategoryPopup';
 
-function Category({ category, loadCategory }) {
+function Category({ category, categoryList, loadCategory }) {
   const title = "Category";
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("add");
@@ -17,7 +17,7 @@ function Category({ category, loadCategory }) {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [deleteId, setDeleteId] = useState(null);
-  const [openDelete, setOpenDelete] = useState(false);  // separate open state
+  const [openDelete, setOpenDelete] = useState(false);
 
   const totalCard = {
     total_categories: {
@@ -27,8 +27,6 @@ function Category({ category, loadCategory }) {
       value: category.total_categories,
     }
   }
-
-  const categoryList = category.list || [];
 
   const handleOpenDelete = (id) => {
     setDeleteId(id);
@@ -153,13 +151,13 @@ function Category({ category, loadCategory }) {
                   <div className="flex justify-center gap-3">
                     <button
                       onClick={() => handleOpenEdit(category)}
-                      className="border py-1 px-2 rounded-md text-indigo-600 hover:text-indigo-900"
+                      className="bg-blue-500 text-white text-sm py-1 px-2 rounded-md hover:bg-blue-600"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => { handleOpenDelete(category.category_id) }}
-                      className="border py-1 px-2 rounded-md text-red-600 hover:text-red-900"
+                      className="bg-red-500 text-white text-sm py-1 px-2 rounded-md hover:bg-red-600"
                     >
                       Delete
                     </button>
@@ -194,7 +192,7 @@ function Category({ category, loadCategory }) {
         title="Delete Item"
         message="Do you really want to delete this item?"
         onConfirm={() => handleDelete(deleteId)}
-        onCancel={() => setOpen(false)}
+        onCancel={() => setOpenDelete(false)}
       />
     </>
   );

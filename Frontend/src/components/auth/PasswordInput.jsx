@@ -1,3 +1,5 @@
+import HideIcon from "../common/HideIcon"
+
 function PasswordInput({ label, name, placeholder, className, show, onToggle, value, onChange, error }) {
   return (
     <div className={className}>
@@ -14,11 +16,11 @@ function PasswordInput({ label, name, placeholder, className, show, onToggle, va
           value={value}
           onChange={onChange}
         />
-        <img
-          src={`/images//${show ? "hide" : "unhide"}.png`}
-          alt="Show/Hide"
+        <HideIcon
+          size={20}
+          show={!show}
           onClick={onToggle}
-          className="h-4 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+          className="text-coffee-500 h-4 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
         />
       </div>
       <p className="error-text">{error}</p>

@@ -1,9 +1,7 @@
 import { errorMessages } from "./errorMessages";
-import { users } from "./fakeData";
 
-export const validateLogin = (form, setErrors) => {
-  const newErrors = {};
-
+export const validateLogin = (form, setErrors, customerList) => {
+  const newErrors = {};  
   if (!form.email.trim())
     newErrors.email = errorMessages.email.required;
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
@@ -18,7 +16,7 @@ export const validateLogin = (form, setErrors) => {
   }
 
   // Check email exists
-  const user = users.find(u => u.email === form.email);
+  const user = customerList.find(u => u.email === form.email);
   if (!user) {
     newErrors.email = errorMessages.email.notFound;
     setErrors(newErrors);
@@ -31,7 +29,8 @@ export const validateLogin = (form, setErrors) => {
     setErrors(newErrors);
     return false;
   }
-
   setErrors({});
+  console.log("login sucessfully");
+
   return true;
 };

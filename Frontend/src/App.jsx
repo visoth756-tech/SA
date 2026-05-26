@@ -14,6 +14,8 @@ import NotFound from './components/common/NotFound';
 
 export function App() {
   const [category, setCategory] = useState([]);
+  const [user, setUser] = useState([]);
+
   const loadCategory = async () => {
     try {
       const response = await axios.get('/api/categories');
@@ -22,7 +24,7 @@ export function App() {
       console.log(err);
     }
   };
-  
+
   useEffect(() => {
     const fetchOnMount = async () => {
       await loadCategory();
@@ -30,19 +32,62 @@ export function App() {
     fetchOnMount();
   }, []);
 
+  const loadUser = async () => {
+    try {
+      const res = await axios.get("/api/customers");
+      setUser(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    const fetchOnMount = async () => {
+      await loadUser();
+    };
+    fetchOnMount();
+  }, []);
+
+  const categoryList = category.list || [];
+  const customerList = user.list || [];
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MainLayout />} />
 
-        <Route path="/auth/login" element={<LoginAccount />} />
-        <Route path="/auth/createAcc" element={<CreateAccount />} />
+        <Route path="/auth/login" element=
+          {<LoginAccount
+            customerList={customerList}
+            loadUser={loadUser}
+          />}
+        />
+        <Route path="/auth/createAcc" element=
+          {<CreateAccount
+
+          />}
+        />
 
         <Route path="/admin" element={<Dashboard />} />
-        <Route path="/admin/category" element={<Category category={category} loadCategory={loadCategory} />} />
-        <Route path="/admin/menu" element={<Menu />} />
+        <Route path="/admin/category" element={
+          <Category
+            category={category}
+            categoryList={categoryList}
+            loadCategory={loadCategory}
+          />}
+        />
+        <Route path="/admin/menu" element={
+          <Menu
+            categoryList={categoryList}
+          />}
+        />
         <Route path="/admin/order" element={<Order />} />
-        <Route path="/admin/customer" element={<Customer />} />
+        <Route path="/admin/customer" element={
+          <Customer
+            customerList={customerList}
+            loadUser={loadUser}
+          />}
+        />
 
         {/* <Route path="idk" element={<IDK />} /> */}
         <Route path="*" element={<NotFound />} />

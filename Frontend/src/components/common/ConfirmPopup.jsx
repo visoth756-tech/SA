@@ -10,8 +10,14 @@ function ConfirmPopup({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl">
+    <div
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      onClick={onCancel}
+    >
+      <div
+        className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="text-xl font-bold mb-3">{title}</h2>
 
         <p className="text-gray-600 mb-6">{message}</p>
