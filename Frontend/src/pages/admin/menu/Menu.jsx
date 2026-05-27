@@ -12,16 +12,18 @@ import TableProduct from './TableProduct';
 
 export function Menu({ categoryList }) {
   const title = "Product";
-  const img = "/images/product-coffee.png";
   const [products, setProducts] = useState([]);
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("add");
-  // const [editId, setEditId] = useState(null);
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [price, setPrice] = useState("");
   const [categoryId, setCategoryId] = useState(categoryList[0]?.category_id ?? "");
   const [status, setStatus] = useState("true");
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+
+  // const [editId, setEditId] = useState(null);
 
   const loadProduct = async () => {
     try {
@@ -34,18 +36,29 @@ export function Menu({ categoryList }) {
 
   const handleSubmit = async () => {
     try {
+      let imageUrl = "";
+
+      // if (image) {
+      //   const formData = new FormData();
+      //   formData.append("file", image);
+
+      //   const uploadRes = await axios.post("/api/upload", formData);
+      //   imageUrl = uploadRes.data.url;
+      // }
       await axios.post("/api/products", {
         name,
         description: desc,
         category_id: categoryId,
         price: Number(price * 100),
         is_active: status === "true",
+        image_url: imageUrl
       });
       setName("");
       setDesc("");
       setCategoryId("");
-      setPrice("")
-      setStatus("")
+      setPrice("");
+      setStatus("");
+      setImage("");
       setOpen(false);
 
       loadProduct();
@@ -59,8 +72,9 @@ export function Menu({ categoryList }) {
     setName("");
     setDesc("");
     setCategoryId(categoryList[0]?.category_id ?? "");
-    setPrice("")
-    setStatus("true")
+    setPrice("");
+    setStatus("true");
+    setImage("");
     setOpen(true);
   };
 
@@ -105,9 +119,9 @@ export function Menu({ categoryList }) {
           <SearchInfo />
 
           <TableProduct
+            title={title}
             productLists={productLists}
             loadProduct={loadProduct}
-            img={img}
           />
         </div >
       </div >
@@ -119,6 +133,8 @@ export function Menu({ categoryList }) {
         categoryId={categoryId} setCategoryId={setCategoryId}
         price={price} setPrice={setPrice}
         status={status} setStatus={setStatus}
+        image={image} setImage={setImage}
+        imagePreview={imagePreview} setImagePreview={setImagePreview}
 
         categoryList={categoryList}
         mode={mode}

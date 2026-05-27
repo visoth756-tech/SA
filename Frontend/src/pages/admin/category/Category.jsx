@@ -5,9 +5,12 @@ import TotalValue from '../../../components/admin/TotalValue';
 import AddNewValue from '../../../components/admin/AddNewValue';
 import SearchInfo from '../../../components/admin/SearchInfo';
 import TableData from '../../../components/admin/TableData';
+import EmptyTable from '../../../components/common/EmptyTable';
+
 import axios from 'axios';
 import ConfirmPopup from '../../../components/common/ConfirmPopup';
 import CategoryPopup from './CategoryPopup';
+import TableCategory from './TableCategory';
 
 function Category({ category, categoryList, loadCategory }) {
   const title = "Category";
@@ -16,8 +19,6 @@ function Category({ category, categoryList, loadCategory }) {
   const [editId, setEditId] = useState(null);
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
-  const [deleteId, setDeleteId] = useState(null);
-  const [openDelete, setOpenDelete] = useState(false);
 
   const totalCard = {
     total_categories: {
@@ -27,21 +28,6 @@ function Category({ category, categoryList, loadCategory }) {
       value: category.total_categories,
     }
   }
-
-  const handleOpenDelete = (id) => {
-    setDeleteId(id);
-    setOpenDelete(true);
-  };
-
-  const handleDelete = async () => {
-    try {
-      await axios.delete(`/api/categories/${deleteId}`);
-      setOpenDelete(false);
-      loadCategory();
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   // Open Add popup
   const handleOpenAdd = () => {
@@ -125,54 +111,11 @@ function Category({ category, categoryList, loadCategory }) {
             </div>
           </div>
           <SearchInfo />
-          <div className="w-full overflow-auto border border-line rounded-2xl">
-            <div className="min-w-56.25">
-              {/* TABLE HEADER */}
-              <div className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr] sticky top-0 bg-app font-semibold text-sm rounded-t-2xl px-4 py-3 border-b border-gray-300">
-                <div>ID</div>
-                <div>Category</div>
-                <div>Status</div>
-                <div className="flex justify-center">Action</div>
-              </div>
-
-              {/* TABLE ROWS (dynamic) */}
-              {categoryList.map((category) => (
-                <div
-                  key={category.category_id}
-                  className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr] text-sm px-4 py-3 border-b border-gray-100 hover:bg-gray-50"
-                >
-                  <div>{category.category_id}</div>
-                  <div>{category.category_name}</div>
-                  <div>
-                    <span className={`rounded-full text-xs`}>
-                      STATUS
-                    </span>
-                  </div>
-                  <div className="flex justify-center gap-3">
-                    <button
-                      onClick={() => handleOpenEdit(category)}
-                      className="bg-blue-500 text-white text-sm py-1 px-2 rounded-md hover:bg-blue-600"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => { handleOpenDelete(category.category_id) }}
-                      className="bg-red-500 text-white text-sm py-1 px-2 rounded-md hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-
-              {/* Optional: empty state */}
-              {category.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  No categories found.
-                </div>
-              )}
-            </div>
-          </div>
+          <TableCategory
+            title={title}
+            categoryList={categoryList}
+            handleOpenEdit={handleOpenEdit}
+          />
         </div>
       </div>
 
@@ -185,14 +128,6 @@ function Category({ category, categoryList, loadCategory }) {
         desc={desc}
         setDesc={setDesc}
         handleSubmit={mode === "edit" ? handleEdit : handleSubmit}
-      />
-
-      <ConfirmPopup
-        open={openDelete}
-        title="Delete Item"
-        message="Do you really want to delete this item?"
-        onConfirm={() => handleDelete(deleteId)}
-        onCancel={() => setOpenDelete(false)}
       />
     </>
   );

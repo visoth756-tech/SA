@@ -20,9 +20,9 @@ export function Customer({ customerList, loadUser }) {
     total_customer: {
       id: "total_customer",
       name: "Total Customer",
-      type: "monthly",
+      type: "static",
       value: Object.keys(customerList).length,
-      per: -100
+      per: 100
     }
   }
 
@@ -49,6 +49,7 @@ export function Customer({ customerList, loadUser }) {
           </div>
           <SearchInfo />
           <TableCustomer
+            title={title}
             customerList={customerList}
             loadUser={loadUser}
           />

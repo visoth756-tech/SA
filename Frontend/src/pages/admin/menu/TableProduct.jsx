@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { formatMoney } from '../../../utils/formating'
 import ConfirmPopup from '../../../components/common/ConfirmPopup'
+import EmptyTable from '../../../components/common/EmptyTable';
+
 import axios from 'axios';
 
-function TableProduct({ productLists, loadProduct, img }) {
+function TableProduct({ title, productLists, loadProduct }) {
   const [deleteId, setDeleteId] = useState(null);
   const [openDelete, setOpenDelete] = useState(false);
 
@@ -28,75 +30,68 @@ function TableProduct({ productLists, loadProduct, img }) {
         {productLists.map((item) => (
           <div
             key={item.product_id}
-            className="bg-white rounded-xl shadow-md border hover:shadow-lg transition w-full"
+            className="bg-white rounded-xl shadow-md border border-line hover:shadow-lg transition w-full"
           >
-            <div className="relative h-44 bg-gray-100">
+            {/* IMAGE */}
+            <div className="relative h-44 bg-gray-100 rounded-xl">
               <img
-                src={img}
-                className="w-full h-full object-contain lg:object-cover rounded-xl"
+                src={item.image_url || "/images/logo.png"}
+                alt={item.name}
+                className="w-full h-full object-contain lg:object-cover"
               />
-              <span className={`
-                    absolute top-2 left-2 text-xs px-2 py-1 rounded-full text-white
-                    ${item.is_active ? "bg-green-500" : "bg-red-500"}
-                   `}
+
+              <span
+                className={`
+              absolute top-2 left-2 text-xs px-2 py-1 rounded-full text-white
+              ${item.is_active ? "bg-green-500" : "bg-red-500"}
+            `}
               >
                 {item.is_active ? "Active" : "Inactive"}
               </span>
             </div>
 
-            {/* <!-- Content --> */}
-            < div className="p-4" >
+            {/* CONTENT */}
+            <div className="p-4">
 
-              {/* <!-- Title --> */}
+              <h2 className="text-lg font-semibold text-gray-800">{item.name}</h2>
+              <p className="text-sm text-gray-500 mt-1">{item.description}</p>
+              <p className="text-xs text-gray-400 mt-2">{item?.Category?.category_name}</p>
 
-              <h2 className="text-lg font-semibold text-gray-800">
-                {item.name}
-              </h2>
-
-              {/* <!-- Description --> */}
-              <p className="text-sm text-gray-500 mt-1">
-                {item.description}
-              </p>
-
-              {/* <!-- Category --> */}
-              <p className="text-xs text-gray-400 mt-2">
-                {item.Category.category_name}
-              </p>
-
-              {/* <!-- Price --> */}
               <div className="mt-3 text-green-600 font-bold text-lg">
                 {formatMoney(item.price)}
               </div>
 
-              {/* <!-- Buttons --> */}
+              {/* ACTIONS */}
               <div className="flex gap-2 mt-4">
+
                 <button className="flex-1 bg-blue-500 text-white text-sm py-1.5 rounded-lg hover:bg-blue-600">
                   Edit
                 </button>
 
                 <button
-                  onClick={() => { handleOpenDelete(item.product_id) }}
+                  onClick={() => handleOpenDelete(item.product_id)}
                   className="flex-1 bg-red-500 text-white text-sm py-1.5 rounded-lg hover:bg-red-600"
                 >
                   Delete
                 </button>
               </div>
-
             </div>
           </div>
         ))}
-        {/* Optional: empty state */}
-        {productLists.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            No Product found.
-          </div>
-        )}
-      </div >
+
+        <EmptyTable
+          title={title}
+          emptyTable={productLists}
+        />
+
+      </div>
+
+      {/* CONFIRM POPUP */}
       <ConfirmPopup
         open={openDelete}
         title="Delete Item"
         message="Do you really want to delete this item?"
-        onConfirm={() => handleDelete()}
+        onConfirm={handleDelete}
         onCancel={() => setOpenDelete(false)}
       />
     </>
