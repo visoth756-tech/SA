@@ -21,3 +21,19 @@ export function formatPercentage(per) {
 export function formatFullname(first = "", last = "") {
   return `${first} ${last}`.trim();
 }
+
+export function formatPhone(phone) {
+  if (!phone) return "-";
+
+  const cleaned = phone.replace(/\D/g, "");
+
+  if (cleaned.length === 9) {
+    return `${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6)}`;
+  }
+
+  if (cleaned.length === 10) {
+    return `${cleaned.slice(0, 4)} ${cleaned.slice(4, 7)} ${cleaned.slice(7)}`;
+  }
+
+  return phone;
+};

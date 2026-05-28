@@ -1,18 +1,38 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { HiChevronDown } from "react-icons/hi";
-import { formatFullname } from '../../../utils/formating';
 import EmptyTable from '../../../components/common/EmptyTable';
+import { formatFullname, formatPhone } from '../../../utils/formating';
+import axios from 'axios';
+import ConfirmPopup from '../../../components/common/ConfirmPopup';
 
-function TableCustomer({ title, customerList }) {
-
-  const grid_cols = "grid-cols-[0.8fr_2fr_2fr_1.5fr_0.8fr_1fr]";
+function TableCustomer({ title, customerList, handleOpenEdit, loadCustomer }) {
+  const grid_cols = "grid-cols-[2.2fr_2fr_1.5fr_1fr_1fr_0.8fr]";
 
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [dropdownPos, setDropdownPos] = useState({
+    top: 0,
+    left: 0
+  });
   const [statusMap, setStatusMap] = useState({});
-
   const containerRef = useRef(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-  // click outside close
+  const handleOpenDelete = (id) => {
+    setDeleteId(id);
+    setOpenDelete(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`/api/customers/${deleteId}`);
+      setOpenDelete(false);
+      loadCustomer();
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
     const handleClick = (e) => {
       if (!containerRef.current?.contains(e.target)) {
@@ -21,10 +41,28 @@ function TableCustomer({ title, customerList }) {
     };
 
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+
+    return () =>
+      document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  // handle status change per user
+  const handleOpenMenu = (e, customer) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+
+    setDropdownPos({
+      top: rect.bottom + window.scrollY + 8,
+      left: rect.right - 176
+    });
+
+    setSelectedCustomer(customer);
+
+    setOpenMenuId(
+      openMenuId === customer.customer_id
+        ? null
+        : customer.customer_id
+    );
+  };
+
   const handleStatusChange = (id, value) => {
     setStatusMap((prev) => ({
       ...prev,
@@ -33,97 +71,156 @@ function TableCustomer({ title, customerList }) {
   };
 
   return (
-    <div className="w-full overflow-auto border border-line rounded-2xl">
-      <div className="min-w-225" ref={containerRef}>
+    <>
+      <div
+        className="w-full overflow-x-auto border border-line rounded-2xl bg-white relative"
+        ref={containerRef}
+      >
+        <div className="min-w-275">
+          <div className={`grid ${grid_cols} gap-3 sticky top-0 bg-gray-50 text-gray-500 font-semibold text-xs uppercase tracking-wide px-4 py-3 border-b border-gray-200 z-10`}>
+            <div>Name</div>
+            <div>Email</div>
+            <div>Phone</div>
+            <div className="flex justify-center">Loyalty Points</div>
+            <div className="flex justify-center">Status</div>
+            <div className="flex justify-center">Action</div>
+          </div>
 
-        {/* HEADER */}
-        <div className={`grid ${grid_cols} gap-2 sticky top-0 bg-app font-semibold text-sm px-4 py-3 border-b border-gray-300`}>
-          <div>Image</div>
-          <div>Name</div>
-          <div>Email</div>
-          <div>Phone</div>
-          <div className="flex justify-center">Status</div>
-          <div className="flex justify-center">Action</div>
-        </div>
+          {customerList.map((c) => (
+            <div
+              key={c.customer_id}
+              className={`grid ${grid_cols} gap-3 items-center px-4 py-3 text-sm border-b border-gray-100 hover:bg-gray-50 transition-colors`}
+            >
+              {/* NAME */}
+              <div className="flex items-center gap-3 min-w-0">
+                <img
+                  src={
+                    c.image_url ||
+                    "/images/customer_fill.png"
+                  }
+                  alt={c.first_name}
+                  className="w-11 h-11 rounded-full object-cover border border-gray-200"
+                />
 
-        {/* ROWS */}
-        {customerList.map((c) => (
-          <div
-            key={c.customer_id}
-            className={`grid ${grid_cols} gap-2 items-center p-4 text-sm border-b border-gray-100 relative`}
-          >
+                <div className="min-w-0">
+                  <div className="font-semibold text-gray-800 truncate">
+                    {formatFullname(c.first_name, c.last_name)}
+                  </div>
 
-            {/* IMAGE */}
-            <div className="flex justify-center">
-              <img
-                src={c.image_url || "/images/logo.png"}
-                alt="customer"
-                className="w-10 h-10 rounded-full object-cover border"
-              />
+                  <div className="text-xs text-gray-400 truncate">
+                    ID: #{c.customer_id}
+                  </div>
+                </div>
+              </div>
+
+              {/* EMAIL */}
+              <div className="truncate text-gray-600">
+                {c.email}
+              </div>
+
+              {/* PHONE */}
+              <div className="truncate text-gray-600">
+                {formatPhone(c.phone)}
+              </div>
+
+              {/* POINTS */}
+              <div className="flex justify-center">
+                <div className="px-3 py-1 rounded-full bg-green-50 text-green-600 font-semibold text-xs">
+                  {c.loyalty_points || 0} pts
+                </div>
+              </div>
+
+              {/* STATUS */}
+              <div className="flex justify-center">
+                <select
+                  value={
+                    statusMap[c.customer_id] ??
+                    (c.is_active ? "active" : "inactive")
+                  }
+                  onChange={(e) =>
+                    handleStatusChange(
+                      c.customer_id,
+                      e.target.value
+                    )
+                  }
+                  className={`rounded-full px-3 py-1 text-xs font-semibold border outline-none
+                    ${(
+                      statusMap[c.customer_id] ??
+                      (c.is_active ? "active" : "inactive")
+                    ) === "active"
+                      ? "text-green-600 border-green-200 bg-green-50"
+                      : "text-yellow-600 border-yellow-200 bg-yellow-50"
+                    }`}
+                >
+                  <option value="active">
+                    Active
+                  </option>
+
+                  <option value="inactive">
+                    Inactive
+                  </option>
+                </select>
+              </div>
+
+              {/* ACTION */}
+              <div className="flex justify-center">
+                <button
+                  onClick={(e) => handleOpenMenu(e, c)}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 transition"
+                >
+                  <span>View</span>
+
+                  <HiChevronDown
+                    size={16}
+                    className={`transition-transform ${openMenuId === c.customer_id ? "rotate-180" : ""}`}
+                  />
+                </button>
+              </div>
             </div>
-
-            <div className="font-medium truncate">{formatFullname(c.first_name, c.last_name)}</div>
-            <div className="font-medium truncate">{c.email}</div>
-            <div className="font-medium truncate">{c.phone}</div>
-            <div className="flex justify-center">
-              <select
-                value={statusMap[c.customer_id] || "active"}
-                onChange={(e) =>
-                  handleStatusChange(c.customer_id, e.target.value)
-                }
-                className={`border rounded px-2 py-1 text-sm font-medium
-                  ${statusMap[c.customer_id] === "active"
-                    ? "text-green-600 border-green-400"
-                    : statusMap[c.customer_id] === "inactive"
-                      ? "text-yellow-600 border-yellow-400"
-                      : "text-red-600 border-red-400"
-                  }`}
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Pending</option>
-                <option value="banned">Banned</option>
-              </select>
-            </div>
-
-            <div className="flex justify-center relative">
-              <button
-                onClick={() =>
-                  setOpenMenuId(openMenuId === c.customer_id ? null : c.customer_id)
-                }
-                className="flex gap-1 border py-1 px-2 rounded-md text-gray-500 hover:text-black items-center"
-              >
-                <div>View</div>
-                <HiChevronDown size={18} />
+          ))}
+          {/* GLOBAL DROPDOWN */}
+          {openMenuId && selectedCustomer && (
+            <div
+              className="fixed w-44 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden z-9999"
+              style={{
+                top: dropdownPos.top,
+                left: dropdownPos.left
+              }}
+            >
+              <button className="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition">
+                View Detail
               </button>
 
-              {openMenuId === c.customer_id && (
-                <div className="absolute right-0 top-full mt-2 w-40 bg-white border rounded-md shadow-md z-50">
+              <button
+                onClick={() => handleOpenEdit(customerList)}
+                className="w-full text-left px-4 py-2.5 text-blue-600 hover:bg-blue-50 transition"
+              >
+                Edit
+              </button>
 
-                  <button className="w-full text-left px-3 py-2 hover:bg-gray-100">
-                    View Detail
-                  </button>
-
-                  <button className="w-full text-left px-3 py-2 text-blue-500 hover:bg-gray-100">
-                    Edit
-                  </button>
-
-                  <button className="w-full text-left px-3 py-2 text-red-500 hover:bg-gray-100">
-                    Delete
-                  </button>
-
-                </div>
-              )}
+              <button
+                onClick={() => handleOpenDelete(customerList.product_id)}
+                className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-red-50 transition"
+              >
+                Delete
+              </button>
             </div>
-
-          </div>
-        ))}
-        <EmptyTable
-          title={title}
-          emptyTable={customerList
-          } />
-
+          )}
+          <EmptyTable
+            title={title}
+            emptyTable={customerList}
+          />
+        </div>
       </div>
-    </div>
+
+      <ConfirmPopup
+        open={openDelete}
+        title={`Delete ${title}`}
+        message={`Do you really want to delete this ${title}`}
+        onConfirm={handleDelete}
+        onCancel={() => setOpenDelete(false)}
+      />
+    </>
   )
 }
 

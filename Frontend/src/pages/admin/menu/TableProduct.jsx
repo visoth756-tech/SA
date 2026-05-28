@@ -5,7 +5,7 @@ import EmptyTable from '../../../components/common/EmptyTable';
 
 import axios from 'axios';
 
-function TableProduct({ title, productLists, loadProduct }) {
+function TableProduct({ title, productLists, handleOpenEdit, loadProduct }) {
   const [deleteId, setDeleteId] = useState(null);
   const [openDelete, setOpenDelete] = useState(false);
 
@@ -51,29 +51,33 @@ function TableProduct({ title, productLists, loadProduct }) {
             </div>
 
             {/* CONTENT */}
-            <div className="p-4">
-
-              <h2 className="text-lg font-semibold text-gray-800">{item.name}</h2>
-              <p className="text-sm text-gray-500 mt-1">{item.description}</p>
-              <p className="text-xs text-gray-400 mt-2">{item?.Category?.category_name}</p>
-
-              <div className="mt-3 text-green-600 font-bold text-lg">
-                {formatMoney(item.price)}
+            <div className="flex flex-col justify-between p-4">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-800">{item.name}</h2>
+                <p className="text-sm text-gray-500 mt-1">{item.description === "" ? "No description" : item.description }</p>
+                <p className="text-xs text-gray-400 mt-2">{item?.Category?.category_name}</p>
               </div>
+              <div>
+                <div className="mt-3 text-green-600 font-bold text-lg">
+                  {formatMoney(item.price)}
+                </div>
 
-              {/* ACTIONS */}
-              <div className="flex gap-2 mt-4">
+                {/* ACTIONS */}
+                <div className="flex gap-2 mt-4">
+                  <button 
+                    onClick={()=> handleOpenEdit(item)}
+                    className="flex-1 bg-blue-500 text-white text-sm py-1.5 rounded-lg hover:bg-blue-600"
+                    >
+                    Edit
+                  </button>
 
-                <button className="flex-1 bg-blue-500 text-white text-sm py-1.5 rounded-lg hover:bg-blue-600">
-                  Edit
-                </button>
-
-                <button
-                  onClick={() => handleOpenDelete(item.product_id)}
-                  className="flex-1 bg-red-500 text-white text-sm py-1.5 rounded-lg hover:bg-red-600"
-                >
-                  Delete
-                </button>
+                  <button
+                    onClick={() => handleOpenDelete(item.product_id)}
+                    className="flex-1 bg-red-500 text-white text-sm py-1.5 rounded-lg hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -83,10 +87,7 @@ function TableProduct({ title, productLists, loadProduct }) {
           title={title}
           emptyTable={productLists}
         />
-
       </div>
-
-      {/* CONFIRM POPUP */}
       <ConfirmPopup
         open={openDelete}
         title="Delete Item"

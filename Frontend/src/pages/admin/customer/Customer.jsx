@@ -1,5 +1,5 @@
 import './Customer.css';
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { Header } from "../../../components/admin/Header";
 import NewValue from "../../../components/admin/NewValue";
@@ -9,12 +9,122 @@ import TotalValue from '../../../components/admin/TotalValue';
 import AddNewValue from '../../../components/admin/AddNewValue';
 import SearchInfo from '../../../components/admin/SearchInfo';
 import TableCustomer from './TableCustomer';
+import axios from 'axios';
+import PopupCustomer from './PopupCustomer';
 
-export function Customer({ customerList, loadUser }) {
+const defaultForm = {
+  first_name: "",
+  last_name: "",
+  email: "",
+  password: "",
+  phone: "",
+  loyalty_points: 0,
+  status: "true",
+};
+
+export function Customer({ customerList, loadCustomer }) {
   const title = "Customer";
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState("add"); // add or edit
+  const [mode, setMode] = useState("add");
+  const [loading, setLoading] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [form, setForm] = useState(defaultForm);
+  const [imagePreview, setImagePreview] = useState("");
+  const imageRef = useRef(null);
 
+  const handleChange = (key, value) => {
+    setForm(prev => ({ ...prev, [key]: value }));
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      imageRef.current = file;
+      setImagePreview(URL.createObjectURL(file));
+    }
+  }
+
+  const createFormData = () => {
+    const formData = new FormData();
+
+    formData.append("first_name", form.first_name);
+    formData.append("last_name", form.last_name);
+    formData.append("email", form.email);
+    formData.append("phone", form.phone);
+    formData.append("loyalty_points", form.loyalty_points);
+    formData.append("is_active", form.status === "true");
+
+    if (form.password) {
+      formData.append("password", form.password);
+    }
+
+    if (imageRef.current) {
+      formData.append("image", imageRef.current);
+    }
+
+    return formData;
+  };
+
+  const resetForm = () => {
+    setForm({ ...defaultForm })
+    setImagePreview("");
+    imageRef.current = null;
+    setEditId(null);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+
+      const formData = createFormData();
+      if (mode === "add") {
+        await axios.post("/api/customers",
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
+      } else {
+        await axios.put(`/api/customers/${editId}`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+      }
+
+      resetForm();
+      setOpen(false);
+      loadCustomer();
+
+    } catch (err) {
+      console.log("Error:", err.response?.data);
+      setOpen(false);
+    } finally {
+      setLoading(false)
+    }
+  };
+
+  const handleOpenAdd = () => {
+    resetForm();
+    setMode("add");
+    setOpen(true);
+  };
+
+  const handleOpenEdit = (customer) => {
+    setMode("edit");
+    setEditId(customer.customer_id)
+
+    setForm({
+      first_name: customer.first_name || "",
+      last_name: customer.last_name || "",
+      email: customer.email || "",
+      password: "",
+      phone: customer.phone || "",
+      loyalty_points: customer.loyalty_points ?? 0,
+      status: String(customer.is_active ?? true),
+    });
+
+    setImagePreview(customer.image_url || "")
+    setOpen(true);
+  }
 
   const totalCard = {
     total_customer: {
@@ -22,11 +132,9 @@ export function Customer({ customerList, loadUser }) {
       name: "Total Customer",
       type: "static",
       value: Object.keys(customerList).length,
-      per: 100
     }
   }
-
-
+  
   return (
     <>
       <title>Customer</title>
@@ -41,108 +149,34 @@ export function Customer({ customerList, loadUser }) {
             />
             <AddNewValue
               title={title}
-              onClick={() => {
-                setMode("add");
-                setOpen(true);
-              }}
+              onClick={() => handleOpenAdd()}
             />
           </div>
           <SearchInfo />
+
           <TableCustomer
             title={title}
             customerList={customerList}
-            loadUser={loadUser}
+            handleOpenEdit={handleOpenEdit}
+            loadCustomer={loadCustomer}
           />
         </div>
       </div>
-      {open && (
-        <div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-xl font-semibold">
-                {mode === "edit" ? `Edit ${title}` : `Add New ${title}`}
-              </h2>
+      <PopupCustomer
+        title={title}
+        open={open} setOpen={setOpen}
+        form={form} setForm={setForm}
 
-              <button
-                onClick={() => setOpen(false)}
-                className="text-gray-500 hover:text-black text-xl"
-              >
-                ✕
-              </button>
-            </div>
+        imagePreview={imagePreview}
+        loading={loading}
 
-            {/* Form */}
-            <form className="space-y-4"
-            // onSubmit={handleSubmit}
-            >
-              {/* First Name */}
-              <input
-                type="text"
-                // value={firstName}
-                // onChange={(e) => setFirstName(e.target.value)}
-                placeholder="First Name"
-                className="w-full border rounded-xl px-4 py-2"
-                required
-              />
+        customerList={customerList}
 
-              {/* Last Name */}
-              <input
-                type="text"
-                // value={lastName}
-                // onChange={(e) => setLastName(e.target.value)}
-                placeholder="Last Name"
-                className="w-full border rounded-xl px-4 py-2"
-                required
-              />
-
-              {/* Email */}
-              <input
-                type="email"
-                // value={email}
-                // onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                className="w-full border rounded-xl px-4 py-2"
-                required
-              />
-
-              {/* Phone */}
-              <input
-                type="text"
-                // value={phone}
-                // onChange={(e) => setPhone(e.target.value)}
-                placeholder="Phone"
-                className="w-full border rounded-xl px-4 py-2"
-              />
-
-              {/* Buttons */}
-              <div className="flex justify-end gap-3 pt-3">
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-2 rounded-xl border hover:bg-gray-100"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-black text-white hover:bg-gray-800"
-                >
-                  {mode === "edit" ? "Update Customer" : "Save Customer"}
-                </button>
-              </div>
-
-            </form>
-          </div>
-        </div>
-      )}
+        mode={mode}
+        handleChange={handleChange}
+        handleImageChange={handleImageChange}
+        handleSubmit={handleSubmit}
+      />
     </>
   );
 }

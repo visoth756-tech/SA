@@ -2,7 +2,7 @@ import React from 'react'
 
 function CategoryPopup({
   title,
-  mode = "add",       // "add" | "edit"
+  mode = "add",
   open, setOpen,
   name, setName,
   desc, setDesc,

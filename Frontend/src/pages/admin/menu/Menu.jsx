@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './Menu.css';
 import TableData from "../../../components/admin/TableData";
 import TotalValue from "../../../components/admin/TotalValue";
@@ -15,15 +15,21 @@ export function Menu({ categoryList }) {
   const [products, setProducts] = useState([]);
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("add");
-  const [name, setName] = useState("");
-  const [desc, setDesc] = useState("");
-  const [price, setPrice] = useState("");
-  const [categoryId, setCategoryId] = useState(categoryList[0]?.category_id ?? "");
-  const [status, setStatus] = useState("true");
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [editId, setEditId] = useState(null);
 
-  // const [editId, setEditId] = useState(null);
+  const defaultForm = {
+    name: "",
+    desc: "",
+    price: "",
+    category_id: categoryList[0]?.category_id ?? "",
+    status: "true",
+  };
+
+  const [form, setForm] = useState(defaultForm);
+
+  const [imagePreview, setImagePreview] = useState("");
+  const imageRef = useRef(null);
 
   const loadProduct = async () => {
     try {
@@ -34,53 +40,98 @@ export function Menu({ categoryList }) {
     }
   };
 
+  const handleChange = (key, value) => {
+    setForm(prev => ({ ...prev, [key]: value }));
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      imageRef.current = file;
+      setImagePreview(URL.createObjectURL(file));
+    }
+  }
+
+  const createFormData = () => {
+    const formData = new FormData();
+
+    Object.entries(form).forEach(([key, value]) => {
+      if (key === "price") {
+        formData.append(key, Number(parseFloat(value) * 100));
+      } else if (key === "status") {
+        formData.append("is_active", value === "true");
+      } else if (key === "desc") {
+        formData.append("description", value);
+      } else if (key === "category_id") {
+        formData.append("category_id", value);
+      } else {
+        formData.append(key, value);
+      }
+    });
+    if (imageRef.current) formData.append("image", imageRef.current);
+
+    return formData;
+  };
+
+  const resetForm = () => {
+    setForm(defaultForm)
+    setImagePreview("");
+    imageRef.current = null;
+    setEditId(null);
+  };
+
   const handleSubmit = async () => {
     try {
-      let imageUrl = "";
+      setLoading(true);
 
-      // if (image) {
-      //   const formData = new FormData();
-      //   formData.append("file", image);
+      const formData = createFormData();
+      if (mode === "add") {
+        await axios.post("/api/products",
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
 
-      //   const uploadRes = await axios.post("/api/upload", formData);
-      //   imageUrl = uploadRes.data.url;
-      // }
-      await axios.post("/api/products", {
-        name,
-        description: desc,
-        category_id: categoryId,
-        price: Number(price * 100),
-        is_active: status === "true",
-        image_url: imageUrl
-      });
-      setName("");
-      setDesc("");
-      setCategoryId("");
-      setPrice("");
-      setStatus("");
-      setImage("");
+      } else {
+        await axios.put(`/api/products/${editId}`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
+      }
+
+      resetForm();
       setOpen(false);
-
       loadProduct();
+
     } catch (err) {
       console.log("Error:", err.response?.data);
+      setOpen(false);
+    } finally {
+      setLoading(false)
     }
   };
 
   const handleOpenAdd = () => {
+    resetForm();
     setMode("add");
-    setName("");
-    setDesc("");
-    setCategoryId(categoryList[0]?.category_id ?? "");
-    setPrice("");
-    setStatus("true");
-    setImage("");
     setOpen(true);
   };
 
-  const handleEdit = async () => {
-    // your edit logic here
-  };
+  const handleOpenEdit = (item) => {
+    setMode("edit");
+    setEditId(item.product_id)
+
+    setForm({
+      name: item.name,
+      desc: item.description,
+      price: Number(item.price) / 100,
+      category_id: item.category_id,
+      status: String(item.is_active),
+    });
+
+    setImagePreview(item.image_url)
+    setOpen(true);
+  }
 
   useEffect(() => {
     const fetchOnMount = async () => {
@@ -88,7 +139,6 @@ export function Menu({ categoryList }) {
     };
     fetchOnMount();
   }, []);
-
 
   const productLists = products.list || [];
   const totalCard = {
@@ -112,7 +162,8 @@ export function Menu({ categoryList }) {
             <TotalValue
               totalValue={totalCard}
             />
-            <AddNewValue title={title}
+            <AddNewValue
+              title={title}
               onClick={() => handleOpenAdd()}
             />
           </div>
@@ -121,6 +172,7 @@ export function Menu({ categoryList }) {
           <TableProduct
             title={title}
             productLists={productLists}
+            handleOpenEdit={handleOpenEdit}
             loadProduct={loadProduct}
           />
         </div >
@@ -128,17 +180,16 @@ export function Menu({ categoryList }) {
       <PopupProducts
         title={title}
         open={open} setOpen={setOpen}
-        name={name} setName={setName}
-        desc={desc} setDesc={setDesc}
-        categoryId={categoryId} setCategoryId={setCategoryId}
-        price={price} setPrice={setPrice}
-        status={status} setStatus={setStatus}
-        image={image} setImage={setImage}
-        imagePreview={imagePreview} setImagePreview={setImagePreview}
+        form={form} setForm={setForm}
+        imagePreview={imagePreview}
+        mode={mode}
+        loading={loading}
 
         categoryList={categoryList}
-        mode={mode}
-        handleSubmit={mode === "edit" ? handleEdit : handleSubmit}
+
+        handleChange={handleChange}
+        handleImageChange={handleImageChange}
+        handleSubmit={handleSubmit}
       />
     </>
   );

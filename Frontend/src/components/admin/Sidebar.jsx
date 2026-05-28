@@ -11,6 +11,7 @@ function Sidebar() {
     { to: "/admin/menu", icon: "menu", label: "Product" },
     { to: "/admin/order", icon: "order", label: "Order" },
     { to: "/admin/customer", icon: "customer", label: "Customer" },
+    { to: "/admin/user", icon: "user", label: "User" },
   ];
 
   const iconType = (name, isActive) =>

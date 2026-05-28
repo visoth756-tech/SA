@@ -11,6 +11,7 @@ import { Menu } from './pages/admin/menu/Menu';
 import { Order } from './pages/admin/order/Order';
 import Category from './pages/admin/category/category';
 import NotFound from './components/common/NotFound';
+import User from './pages/admin/user/User';
 
 export function App() {
   const [category, setCategory] = useState([]);
@@ -32,7 +33,7 @@ export function App() {
     fetchOnMount();
   }, []);
 
-  const loadUser = async () => {
+  const loadCustomer = async () => {
     try {
       const res = await axios.get("/api/customers");
       setUser(res.data);
@@ -43,7 +44,7 @@ export function App() {
 
   useEffect(() => {
     const fetchOnMount = async () => {
-      await loadUser();
+      await loadCustomer();
     };
     fetchOnMount();
   }, []);
@@ -59,7 +60,7 @@ export function App() {
         <Route path="/auth/login" element=
           {<LoginAccount
             customerList={customerList}
-            loadUser={loadUser}
+            loadCustomer={loadCustomer}
           />}
         />
         <Route path="/auth/createAcc" element=
@@ -85,11 +86,11 @@ export function App() {
         <Route path="/admin/customer" element={
           <Customer
             customerList={customerList}
-            loadUser={loadUser}
+            loadCustomer={loadCustomer}
           />}
         />
+        <Route path="/admin/user" element={<User/>}/>
 
-        {/* <Route path="idk" element={<IDK />} /> */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
