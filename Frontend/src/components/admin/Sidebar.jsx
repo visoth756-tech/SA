@@ -1,7 +1,5 @@
 import { NavLink, Link } from "react-router-dom";
 import "./Sidebar.css";
-import { useState } from "react";
-
 import React from 'react'
 
 function Sidebar() {
@@ -18,21 +16,21 @@ function Sidebar() {
     `/images/${name}_${isActive ? "fill" : "outline"}.png`;
   const iconSize = "w-5 lg:w-6";
 
-  const [active, setActive] = useState("light");
+  // const [active, setActive] = useState("light");
 
-  const btnClass = (type) => {
-    return [
-      "flex items-center gap-2",
-      "py-2 lg:py-3",
-      "px-4 lg:px-6",
-      "rounded-2xl",
-      "text-sm lg:text-base",
-      "transition-all duration-200",
-      active === type
-        ? "bg-white shadow-md"
-        : "opacity-50 hover:opacity-100",
-    ].join(" ");
-  };
+  // const btnClass = (type) => {
+  //   return [
+  //     "flex items-center gap-2",
+  //     "py-2 lg:py-3",
+  //     "px-4 lg:px-6",
+  //     "rounded-2xl",
+  //     "text-sm lg:text-base",
+  //     "transition-all duration-200",
+  //     active === type
+  //       ? "bg-white shadow-md"
+  //       : "opacity-50 hover:opacity-100",
+  //   ].join(" ");
+  // };
 
   return (
     <div
@@ -116,7 +114,7 @@ function Sidebar() {
           )}
         </NavLink> */}
 
-        <div
+        {/* <div
           className="
             flex justify-center lg:justify-around
             bg-[#F9F9F9]
@@ -153,7 +151,7 @@ function Sidebar() {
               Dark
             </span>
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

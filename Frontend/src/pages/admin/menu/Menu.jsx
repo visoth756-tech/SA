@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Menu.css';
 import TableData from "../../../components/admin/TableData";
 import TotalValue from "../../../components/admin/TotalValue";
@@ -12,24 +12,32 @@ import TableProduct from './TableProduct';
 
 export function Menu({ categoryList }) {
   const title = "Product";
+
   const [products, setProducts] = useState([]);
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [loading, setLoading] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
 
-  const defaultForm = {
+  const defaultDate = {
     name: "",
     desc: "",
     price: "",
     category_id: categoryList[0]?.category_id ?? "",
-    status: "true",
-  };
+    status: true,
+    image: null,
+  }
+  const [form, setForm] = useState(defaultDate);
 
-  const [form, setForm] = useState(defaultForm);
-
-  const [imagePreview, setImagePreview] = useState("");
-  const imageRef = useRef(null);
+  useEffect(() => {
+    if (categoryList?.length > 0) {
+      setForm(prev => ({
+        ...prev,
+        category_id: categoryList[0].category_id
+      }));
+    }
+  }, [categoryList]);
 
   const loadProduct = async () => {
     try {
@@ -40,71 +48,59 @@ export function Menu({ categoryList }) {
     }
   };
 
+  useEffect(() => {
+    loadProduct();
+  }, []);
+
   const handleChange = (key, value) => {
     setForm(prev => ({ ...prev, [key]: value }));
   }
 
-  const handleImageChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      imageRef.current = file;
-      setImagePreview(URL.createObjectURL(file));
-    }
-  }
+    if (!file) return;
 
-  const createFormData = () => {
-    const formData = new FormData();
+    setForm((prev) => ({
+      ...prev,
+      image: file,
+    }));
 
-    Object.entries(form).forEach(([key, value]) => {
-      if (key === "price") {
-        formData.append(key, Number(parseFloat(value) * 100));
-      } else if (key === "status") {
-        formData.append("is_active", value === "true");
-      } else if (key === "desc") {
-        formData.append("description", value);
-      } else if (key === "category_id") {
-        formData.append("category_id", value);
-      } else {
-        formData.append(key, value);
-      }
-    });
-    if (imageRef.current) formData.append("image", imageRef.current);
-
-    return formData;
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const resetForm = () => {
-    setForm(defaultForm)
+    setForm(defaultDate);
     setImagePreview("");
-    imageRef.current = null;
     setEditId(null);
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
+      const formData = new FormData();
 
-      const formData = createFormData();
+      formData.append("name", form.name);
+      formData.append("description", form.desc);
+      formData.append("price", form.price);
+      formData.append("category_id", form.category_id);
+      formData.append("is_active", form.status);
+
+      if (form.image instanceof File) {
+        formData.append("image", form.image);
+      }
+
       if (mode === "add") {
-        await axios.post("/api/products",
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        );
-
+        console.log(form.image);
+        await axios.post("/api/products", formData);
       } else {
-        await axios.put(`/api/products/${editId}`,
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        );
-
+        await axios.put(`/api/products/${editId}`, formData);
       }
 
       resetForm();
-      setOpen(false);
       loadProduct();
-
+      setOpen(false);
     } catch (err) {
-      console.log("Error:", err.response?.data);
+      console.log("Error:", err.response?.data || err.message);
       setOpen(false);
     } finally {
       setLoading(false)
@@ -114,6 +110,7 @@ export function Menu({ categoryList }) {
   const handleOpenAdd = () => {
     resetForm();
     setMode("add");
+    loadProduct();
     setOpen(true);
   };
 
@@ -124,21 +121,15 @@ export function Menu({ categoryList }) {
     setForm({
       name: item.name,
       desc: item.description,
-      price: Number(item.price) / 100,
+      price: Number(item.price),
       category_id: item.category_id,
-      status: String(item.is_active),
+      status: item.is_active === true || item.is_active === "true",
+      image: null,
     });
 
     setImagePreview(item.image_url)
     setOpen(true);
   }
-
-  useEffect(() => {
-    const fetchOnMount = async () => {
-      await loadProduct();
-    };
-    fetchOnMount();
-  }, []);
 
   const productLists = products.list || [];
   const totalCard = {
@@ -172,6 +163,8 @@ export function Menu({ categoryList }) {
           <TableProduct
             title={title}
             productLists={productLists}
+            loading={loading} setLoading={setLoading}
+
             handleOpenEdit={handleOpenEdit}
             loadProduct={loadProduct}
           />
@@ -180,7 +173,7 @@ export function Menu({ categoryList }) {
       <PopupProducts
         title={title}
         open={open} setOpen={setOpen}
-        form={form} setForm={setForm}
+        form={form}
         imagePreview={imagePreview}
         mode={mode}
         loading={loading}
@@ -188,7 +181,7 @@ export function Menu({ categoryList }) {
         categoryList={categoryList}
 
         handleChange={handleChange}
-        handleImageChange={handleImageChange}
+        handleImageChange={handleFileChange}
         handleSubmit={handleSubmit}
       />
     </>

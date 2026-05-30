@@ -7,7 +7,6 @@ function PopupCustomer({
   mode = "add",
   open, setOpen,
   form,
-  setForm,
 
   imagePreview,
   loading,
@@ -18,14 +17,11 @@ function PopupCustomer({
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const updateField = (key, value) => {
-    setForm(prev => ({ ...prev, [key]: value }));
-  };
 
   return (
     open && (
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
         onClick={() => setOpen(false)}
       >
         <div
@@ -142,7 +138,7 @@ function PopupCustomer({
                 </label>
 
                 <input
-                  type="text"
+                  type="number"
                   value={form.phone}
                   onChange={(e) => handleChange("phone", e.target.value)}
                   placeholder="012 345 678"
@@ -202,12 +198,12 @@ function PopupCustomer({
                 <label className="text-sm font-medium text-gray-600 block mb-2">Status</label>
 
                 <select
-                  value={form.status}
-                  onChange={(e) => updateField("status", e.target.value)}
+                  value={form.status ? true : false}
+                  onChange={(e) => handleChange("status", e.target.value === true)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition"
                 >
-                  <option value="true">Active</option>
-                  <option value="false">Inactive</option>
+                  <option value={true}>Active</option>
+                  <option value={false}>Inactive</option>
                 </select>
               </div>
 

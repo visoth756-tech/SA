@@ -1,5 +1,5 @@
 import './Customer.css';
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Header } from "../../../components/admin/Header";
 import NewValue from "../../../components/admin/NewValue";
@@ -12,15 +12,16 @@ import TableCustomer from './TableCustomer';
 import axios from 'axios';
 import PopupCustomer from './PopupCustomer';
 
-const defaultForm = {
+const defaultDate = {
   first_name: "",
   last_name: "",
   email: "",
   password: "",
   phone: "",
+  status: true,
   loyalty_points: 0,
-  status: "true",
-};
+  image: null,
+}
 
 export function Customer({ customerList, loadCustomer }) {
   const title = "Customer";
@@ -28,74 +29,62 @@ export function Customer({ customerList, loadCustomer }) {
   const [mode, setMode] = useState("add");
   const [loading, setLoading] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [form, setForm] = useState(defaultForm);
   const [imagePreview, setImagePreview] = useState("");
-  const imageRef = useRef(null);
+  const [form, setForm] = useState(defaultDate);
 
   const handleChange = (key, value) => {
     setForm(prev => ({ ...prev, [key]: value }));
   }
 
-  const handleImageChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      imageRef.current = file;
-      setImagePreview(URL.createObjectURL(file));
-    }
-  }
+    if (!file) return;
 
-  const createFormData = () => {
-    const formData = new FormData();
+    setForm((prev) => ({
+      ...prev,
+      image: file,
+    }));
 
-    formData.append("first_name", form.first_name);
-    formData.append("last_name", form.last_name);
-    formData.append("email", form.email);
-    formData.append("phone", form.phone);
-    formData.append("loyalty_points", form.loyalty_points);
-    formData.append("is_active", form.status === "true");
-
-    if (form.password) {
-      formData.append("password", form.password);
-    }
-
-    if (imageRef.current) {
-      formData.append("image", imageRef.current);
-    }
-
-    return formData;
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const resetForm = () => {
-    setForm({ ...defaultForm })
+    setForm(defaultDate)
     setImagePreview("");
-    imageRef.current = null;
     setEditId(null);
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
+      const formData = new FormData();
 
-      const formData = createFormData();
+      formData.append("first_name", form.first_name);
+      formData.append("last_name", form.last_name);
+      formData.append("email", form.email);
+      formData.append("phone", form.phone);
+      formData.append("is_active", form.status);
+      formData.append("loyalty_points", form.loyalty_points);
+
+      if (form.password) {
+        formData.append("password", form.password);
+      }
+
+      if (form.image instanceof File) {
+        formData.append("image", form.image);
+      }
+
       if (mode === "add") {
-        await axios.post("/api/customers",
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        );
-
+        await axios.post(`/api/customers`, formData);
       } else {
-        await axios.put(`/api/customers/${editId}`,
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        );
+        await axios.put(`/api/customers/${editId}`, formData);
       }
 
       resetForm();
-      setOpen(false);
       loadCustomer();
-
+      setOpen(false);
     } catch (err) {
-      console.log("Error:", err.response?.data);
+      console.log("Error:", err.response?.data || err.message);
       setOpen(false);
     } finally {
       setLoading(false)
@@ -105,6 +94,7 @@ export function Customer({ customerList, loadCustomer }) {
   const handleOpenAdd = () => {
     resetForm();
     setMode("add");
+    loadCustomer();
     setOpen(true);
   };
 
@@ -116,13 +106,14 @@ export function Customer({ customerList, loadCustomer }) {
       first_name: customer.first_name || "",
       last_name: customer.last_name || "",
       email: customer.email || "",
-      password: "",
+      password: customer.email || "",
       phone: customer.phone || "",
       loyalty_points: customer.loyalty_points ?? 0,
-      status: String(customer.is_active ?? true),
+      status: customer.is_active === true || customer.is_active === "true",
+      imgeUrl: customer.image_url ?? ""
     });
 
-    setImagePreview(customer.image_url || "")
+    setImagePreview(customer.image_url)
     setOpen(true);
   }
 
@@ -134,7 +125,7 @@ export function Customer({ customerList, loadCustomer }) {
       value: Object.keys(customerList).length,
     }
   }
-  
+
   return (
     <>
       <title>Customer</title>
@@ -157,6 +148,7 @@ export function Customer({ customerList, loadCustomer }) {
           <TableCustomer
             title={title}
             customerList={customerList}
+
             handleOpenEdit={handleOpenEdit}
             loadCustomer={loadCustomer}
           />
@@ -174,7 +166,7 @@ export function Customer({ customerList, loadCustomer }) {
 
         mode={mode}
         handleChange={handleChange}
-        handleImageChange={handleImageChange}
+        handleImageChange={handleFileChange}
         handleSubmit={handleSubmit}
       />
     </>

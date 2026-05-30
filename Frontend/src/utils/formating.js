@@ -3,9 +3,7 @@ export function formatNumber(value) {
 }
 
 export function formatMoney(value) {
-  const dollars = value / 100;
-  const fixed2 = parseFloat(dollars.toFixed(2));
-  return fixed2.toLocaleString("en-US", {
+  return Number(value).toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 0,

@@ -7,19 +7,18 @@ import ConfirmPopup from '../../../components/common/ConfirmPopup';
 
 function TableCustomer({ title, customerList, handleOpenEdit, loadCustomer }) {
   const grid_cols = "grid-cols-[2.2fr_2fr_1.5fr_1fr_1fr_0.8fr]";
-
   const [openMenuId, setOpenMenuId] = useState(null);
   const [dropdownPos, setDropdownPos] = useState({
     top: 0,
     left: 0
   });
-  const [statusMap, setStatusMap] = useState({});
   const containerRef = useRef(null);
   const [deleteId, setDeleteId] = useState(null);
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   const handleOpenDelete = (id) => {
+    setOpenMenuId(null);
     setDeleteId(id);
     setOpenDelete(true);
   };
@@ -61,13 +60,6 @@ function TableCustomer({ title, customerList, handleOpenEdit, loadCustomer }) {
         ? null
         : customer.customer_id
     );
-  };
-
-  const handleStatusChange = (id, value) => {
-    setStatusMap((prev) => ({
-      ...prev,
-      [id]: value
-    }));
   };
 
   return (
@@ -132,7 +124,7 @@ function TableCustomer({ title, customerList, handleOpenEdit, loadCustomer }) {
 
               {/* STATUS */}
               <div className="flex justify-center">
-                <select
+                {/* <select
                   value={
                     statusMap[c.customer_id] ??
                     (c.is_active ? "active" : "inactive")
@@ -146,7 +138,7 @@ function TableCustomer({ title, customerList, handleOpenEdit, loadCustomer }) {
                   className={`rounded-full px-3 py-1 text-xs font-semibold border outline-none
                     ${(
                       statusMap[c.customer_id] ??
-                      (c.is_active ? "active" : "inactive")
+                      (c.is_active ? true : false)
                     ) === "active"
                       ? "text-green-600 border-green-200 bg-green-50"
                       : "text-yellow-600 border-yellow-200 bg-yellow-50"
@@ -159,7 +151,8 @@ function TableCustomer({ title, customerList, handleOpenEdit, loadCustomer }) {
                   <option value="inactive">
                     Inactive
                   </option>
-                </select>
+                </select> */}
+                {c.is_active ? "Active" : "Inactive"}
               </div>
 
               {/* ACTION */}
@@ -187,19 +180,18 @@ function TableCustomer({ title, customerList, handleOpenEdit, loadCustomer }) {
                 left: dropdownPos.left
               }}
             >
-              <button className="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition">
-                View Detail
-              </button>
-
               <button
-                onClick={() => handleOpenEdit(customerList)}
+                onClick={() => {
+                  handleOpenEdit(selectedCustomer)
+                  setOpenMenuId(null)
+                }}
                 className="w-full text-left px-4 py-2.5 text-blue-600 hover:bg-blue-50 transition"
               >
                 Edit
               </button>
 
               <button
-                onClick={() => handleOpenDelete(customerList.product_id)}
+                onClick={() => handleOpenDelete(selectedCustomer.customer_id)}
                 className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-red-50 transition"
               >
                 Delete

@@ -5,7 +5,7 @@ function PopupProducts({
   title,
   mode = "add",
   open, setOpen,
-  form, setForm,
+  form,
 
   imagePreview,
   loading,
@@ -16,9 +16,6 @@ function PopupProducts({
   handleImageChange,
   handleSubmit
 }) {
-  const updateField = (key, value) => {
-    setForm(prev => ({ ...prev, [key]: value }));
-  };
 
   return (
     open && (
@@ -35,6 +32,7 @@ function PopupProducts({
             <h2 className="text-base font-semibold text-gray-800">
               {mode === "edit" ? `Edit ${title}` : `Add New ${title}`}
             </h2>
+
             <button
               onClick={() => setOpen(false)}
               className="text-gray-400 hover:text-gray-700 text-lg leading-none"
@@ -44,19 +42,28 @@ function PopupProducts({
           </div>
 
           <div className="flex flex-col gap-3">
-            {/* IMAGE ZONE */}
-            <div className="relative w-full h-44 rounded-lg overflow-hidden border border-gray-200">
-              <img
-                src={imagePreview || "/images/No_Image_Available.png"}
-                alt="preview"
-                className="w-full h-full object-cover"
-              />
 
-              {imagePreview && (
-                <div className="absolute top-2 right-2 bg-black/40 text-white text-xs px-2 py-1 rounded">
-                  {imagePreview ? "Selected image" : ""}
-                </div>
-              )}
+            {/* IMAGE */}
+            <div className="relative">
+              <div className="w-full h-52 rounded-2xl overflow-hidden border border-gray-200 bg-gray-50">
+                <img
+                  src={imagePreview || "/images/No_Image_Available.png"}
+                  alt="preview"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+
+              {/* Upload button (only show when no image) */}
+              <label className="absolute bottom-3 right-3 cursor-pointer bg-white/90 backdrop-blur px-4 py-2 rounded-xl shadow-md border border-gray-200 text-sm text-gray-700 flex items-center gap-2 hover:bg-white hover:shadow-lg hover:scale-105 transition-all duration-200">                <MdOutlineFileUpload size={18} />
+                Upload Image
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
             </div>
 
             {/* NAME */}
@@ -66,7 +73,6 @@ function PopupProducts({
                 type="text"
                 value={form.name}
                 onChange={(e) => handleChange("name", e.target.value)}
-                placeholder={`Enter ${title.toLowerCase()} name`}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500"
               />
             </div>
@@ -78,7 +84,6 @@ function PopupProducts({
                 type="number"
                 value={form.price}
                 onChange={(e) => handleChange("price", e.target.value)}
-                placeholder="0.00"
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500"
               />
             </div>
@@ -90,7 +95,7 @@ function PopupProducts({
                 <select
                   value={form.category_id}
                   onChange={(e) => handleChange("category_id", e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
                 >
                   {categoryList.map((item) => (
                     <option key={item.category_id} value={item.category_id}>
@@ -103,12 +108,12 @@ function PopupProducts({
               <div>
                 <label className="text-sm text-gray-500 block mb-1">Status</label>
                 <select
-                  value={form.status}
-                  onChange={(e) => updateField("status", e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500"
+                  value={form.status ? "true" : "false"}
+                  onChange={(e) => handleChange("status", e.target.value === "true")}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
                 >
-                  <option value="true">Active</option>
-                  <option value="false">Inactive</option>
+                  <option value={true}>Active</option>
+                  <option value={false}>Inactive</option>
                 </select>
               </div>
             </div>
@@ -120,30 +125,18 @@ function PopupProducts({
                 value={form.desc}
                 onChange={(e) => handleChange("desc", e.target.value)}
                 rows={3}
-                placeholder={`Short ${title.toLowerCase()} description...`}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none"
               />
             </div>
 
-            {/* FOOTER: upload + cancel + save */}
+            {/* FOOTER */}
             <div className="flex items-center gap-2 mt-2">
-              <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
-                <MdOutlineFileUpload size={18} />
-                {imagePreview ? "Change image" : "Upload image"}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-              </label>
-
               <div className="flex-1" />
 
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="px-4 py-2 text-sm border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-sm border border-gray-200 rounded-lg text-gray-600"
               >
                 Cancel
               </button>
@@ -152,7 +145,7 @@ function PopupProducts({
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading}
-                className="px-4 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg"
               >
                 {loading ? "Saving..." : mode === "edit" ? `Update ${title}` : `Save ${title}`}
               </button>

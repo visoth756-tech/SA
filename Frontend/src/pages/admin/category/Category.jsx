@@ -29,7 +29,6 @@ function Category({ category, categoryList, loadCategory }) {
     }
   }
 
-  // Open Add popup
   const handleOpenAdd = () => {
     setMode("add");
     setName("");
@@ -37,37 +36,29 @@ function Category({ category, categoryList, loadCategory }) {
     setOpen(true);
   };
 
-  // Add new category
   const handleSubmit = async () => {
     try {
-      await axios.post("/api/categories", { category_name: name });
-      setName("");
-      setDesc("");
-      setOpen(false);
+      if (mode === "add") {
+        await axios.post("/api/categories", { category_name: name });
+      } else {
+        await axios.put(`/api/categories/${editId}`, { category_name: name });
+      }
+      setName(""); 
+      setDesc(""); 
+      setOpen(false); 
       loadCategory();
+
     } catch (err) {
-      console.log("Error:", err);
+      console.log(err);
     }
   };
 
-  // Open Edit popup — pre-fill fields
   const handleOpenEdit = (category) => {
     setMode("edit");
     setEditId(category.category_id);
     setName(category.category_name);
     setDesc("");
     setOpen(true);
-  };
-
-  // Edit existing category
-  const handleEdit = async () => {
-    try {
-      await axios.put(`/api/categories/${editId}`, { category_name: name });
-      setOpen(false);
-      loadCategory();
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   return (
@@ -114,6 +105,8 @@ function Category({ category, categoryList, loadCategory }) {
           <TableCategory
             title={title}
             categoryList={categoryList}
+            loadCategory={loadCategory}
+
             handleOpenEdit={handleOpenEdit}
           />
         </div>
@@ -127,7 +120,7 @@ function Category({ category, categoryList, loadCategory }) {
         setName={setName}
         desc={desc}
         setDesc={setDesc}
-        handleSubmit={mode === "edit" ? handleEdit : handleSubmit}
+        handleSubmit={handleSubmit}
       />
     </>
   );
