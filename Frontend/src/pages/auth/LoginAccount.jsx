@@ -117,7 +117,7 @@ function LoginAccount({ customerList }) {
             </span>
 
             <Link
-              to="/auth/createAcc"
+              to="/auth/register"
               className="close-link"
             >
               Create Account

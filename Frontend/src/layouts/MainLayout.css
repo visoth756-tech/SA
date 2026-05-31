@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #f5efe9;
+  --color-darkbrown: #3d2b1f;
+  --color-coffeebrown: #6f4e37;
+  --color-mediumbrown: #5c3b2e;
+  --color-deepbrown: #5a3825;
+  --color-darkest: #4d3425;
+  --color-caramel: #d88b2a;
+  --color-gold: #c9b06b;
+}
+
+.hero-img {
+  width: 150%;
+}
+
+.coffee-card {
+  transition: transform 0.3s;
+}
+
+.coffee-card:hover {
+  transform: translateY(-10px);
+}

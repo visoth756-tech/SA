@@ -1,17 +1,37 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '../../../components/admin/Sidebar';
 import { Header } from '../../../components/admin/Header';
 import TotalValue from '../../../components/admin/TotalValue';
 import AddNewValue from '../../../components/admin/AddNewValue';
 import SearchInfo from '../../../components/admin/SearchInfo';
+import axios from 'axios';
 
-function User({ userList }) {
+function User() {
   const title = "User";
+  const [user, setUser] = useState([]);
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("add");
 
+  const loadUser = async () => {
+    try {
+      const res = await axios.get('/api/users');
+      setUser(res.data);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    const fetchOnMount = async () => {
+      await loadUser();
+    };
+    fetchOnMount();
+  }, []);
+
+  console.log(loadUser())
+
   const totalCard = {
-    total_customer: {
+    total_user: {
       id: "total_user",
       name: "Total User",
       type: "static",
@@ -41,7 +61,7 @@ function User({ userList }) {
             />
           </div>
           <SearchInfo />
-          {/* <TableCustomer
+          {/* <TableCustomer  
             title={title}
           /> */}
         </div>

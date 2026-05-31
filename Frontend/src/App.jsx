@@ -1,95 +1,19 @@
 import './App.css'
-import React, { useEffect, useState } from 'react'
-import axios from 'axios';
+import React from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from './layouts/MainLayout';
-import LoginAccount from './pages/auth/LoginAccount';
-import CreateAccount from './pages/auth/CreateAccount';
-import Dashboard from './pages/admin/dashboard/Dashboard';
-import { Customer } from './pages/admin/customer/Customer';
-import { Menu } from './pages/admin/menu/Menu';
-import { Order } from './pages/admin/order/Order';
-import Category from './pages/admin/category/category';
 import NotFound from './components/common/NotFound';
-import User from './pages/admin/user/User';
+import AuthRoutes from './routes/AuthRoutes';
+import AdminRoutes from './routes/AdminRoutes';
+import MainRoutes from './routes/MainRoutes';
 
 export function App() {
-  const [category, setCategory] = useState([]);
-  const [user, setUser] = useState([]);
-
-  const loadCategory = async () => {
-    try {
-      const response = await axios.get('/api/categories');
-      setCategory(response.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    const fetchOnMount = async () => {
-      await loadCategory();
-    };
-    fetchOnMount();
-  }, []);
-
-  const loadCustomer = async () => {
-    try {
-      const res = await axios.get("/api/customers");
-      setUser(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    const fetchOnMount = async () => {
-      await loadCustomer();
-    };
-    fetchOnMount();
-  }, []);
-
-  const categoryList = category.list || [];
-  const customerList = user.list || [];
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainLayout />} />
-
-        <Route path="/auth/login" element=
-          {<LoginAccount
-            customerList={customerList}
-            loadCustomer={loadCustomer}
-          />}
-        />
-        <Route path="/auth/createAcc" element=
-          {<CreateAccount
-
-          />}
-        />
-
-        <Route path="/admin" element={<Dashboard />} />
-        <Route path="/admin/category" element={
-          <Category
-            category={category}
-            categoryList={categoryList}
-            loadCategory={loadCategory}
-          />}
-        />
-        <Route path="/admin/menu" element={
-          <Menu
-            categoryList={categoryList}
-          />}
-        />
-        <Route path="/admin/order" element={<Order />} />
-        <Route path="/admin/customer" element={
-          <Customer
-            customerList={customerList}
-            loadCustomer={loadCustomer}
-          />}
-        />
-        <Route path="/admin/user" element={<User/>}/>
+        <Route path="/*" element={<MainRoutes />} />
+        <Route path="/auth/*" element={<AuthRoutes />} />
+        <Route path="/admin/*" element={<AdminRoutes />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

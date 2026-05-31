@@ -1,18 +1,13 @@
 import React from 'react'
-import Header from '../components/home/Header';
-import Homepage     from '../pages/home/homepage/Homepages';
-import ProductPages from '../pages/home/products/ProductPages';
-import ReviewPages  from '../pages/home/reviews/ReviewPages';
-import ServiewPages from '../pages/home/services/ServicePages';
+import './MainLayout.css'
+import Header from '../components/home/Navbar';
+import Homepage from '../pages/home/homepage/Homepages';
 
 function MainLayout() {
   return (
     <div className="scroll-smooth font-Inter bg-app">
       <Header />
       <Homepage />
-      <ProductPages />
-      <ReviewPages />
-      <ServiewPages />
     </div>)
 }
 
